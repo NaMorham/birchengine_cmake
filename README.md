@@ -1,5 +1,8 @@
 # birch_engine
 
+Implementing the "BirchEngine" SDL2 project from [Let's Make Games - Youtube](https://www.youtube.com/playlist?list=PLhfAbcv9cehhkG7ZQK0nfIGJC_C-wSLrx).  The original code and design is solely the property of (Carl Birch)[www.youtube.com/@CarlBirch] with my changes as I follow along.
+
+TODO: Remove the generated README content and populate properly.
 
 
 ## Getting started
@@ -43,6 +46,9 @@ Use the built-in continuous integration in GitLab.
 - [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
 
 ***
+
+
+---
 
 # Editing this README
 
@@ -91,3 +97,4 @@ For open source projects, say how it is licensed.
 
 ## Project status
 If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+
