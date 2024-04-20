@@ -567,3 +567,18 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/cmake,visualstudio,visualstudiocode,xcode,vim,windows,linux,osx,c++
 
+# My ignores
+*.swp
+*.bak
+tmp/*
+*.pem
+*.cer
+*.dem
+*.p12
+*.pfx
+id_rsa*
+id_ed*
+id_dsa*
+*_bak/*
+*_tmp/*
+
