@@ -2,6 +2,10 @@
 
 Implementing the "BirchEngine" SDL2 project from [Let's Make Games - Youtube](https://www.youtube.com/playlist?list=PLhfAbcv9cehhkG7ZQK0nfIGJC_C-wSLrx).  The original code and design is solely the property of (Carl Birch)[www.youtube.com/@CarlBirch] with my changes as I follow along.
 
+## Libraries
+
+The CMake is currently based around visual studio and I have not yet added proper per configuration handling and library finding
+
 TODO: Remove the generated README content and populate properly.
 
 
