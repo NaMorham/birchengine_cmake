@@ -1,0 +1,10 @@
+#pragma once
+
+#define BirchEngine_Version_Major @BirchEngine_VERSION_MAJOR@
+#define BirchEngine_Version_Minor @BirchEngine_VERSION_MINOR@
+#define BirchEngine_Version_Patch @BirchEngine_VERSION_PATCH@
+#define BirchEngine_Version_Tweak @BirchEngine_VERSION_TWEAK@
+
+#define BirchEngine_Version "@BirchEngine_VERSION@"
+#define BirchEngine_VersionShort "@BirchEngine_VERSION_MAJOR@.@BirchEngine_VERSION_MINOR@"
+#define BirchEngine_VersionLong "@BirchEngine_VERSION_MAJOR@.@BirchEngine_VERSION_MINOR@.@BirchEngine_VERSION_PATCH@"
