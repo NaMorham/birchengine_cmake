@@ -6,6 +6,7 @@ configure_file(BirchEngineVer.h.in include/BirchEngineVer.h)
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_ttf REQUIRED)
+find_package(SDL2_image REQUIRED)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -19,12 +20,12 @@ set (HDRS
     include/Game.h    
 )
 
-#set (FONTS
-#    fonts/cour.ttf
-#    fonts/courbd.ttf
-#    fonts/courbi.ttf
-#    fonts/couri.ttf
-#)
+set (FONTS
+    Resources/fonts/cour.ttf
+    Resources/fonts/courbd.ttf
+    Resources/fonts/courbi.ttf
+    Resources/fonts/couri.ttf
+)
 
 set (EXTRAS
     BirchEngineVer.h.in
@@ -33,13 +34,12 @@ set (EXTRAS
     LICENSE
 )
 
-source_group("Headers" FILES ${HDRS})
-#source_group("Resources/fonts" FILES ${FONTS})
-source_group("Sources" FILES ${SRCS})
-source_group("Extras" FILES ${EXTRAS})
+source_group("Header Files" FILES ${HDRS})
+source_group("Resource Files/fonts" FILES ${FONTS})
+source_group("Source Files" FILES ${SRCS})
+source_group("Extra Files" FILES ${EXTRAS})
 
-add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} ${EXTRAS})
-#add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} ${FONTS} ${EXTRAS})
+add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} ${FONTS} ${EXTRAS})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
    VS_STARTUP_PROJECT ${PROJECT_NAME}
@@ -67,16 +67,20 @@ add_custom_command(
         $<TARGET_FILE:SDL2_ttf::SDL2_ttf>
         $<TARGET_FILE_DIR:${PROJECT_NAME}>
         COMMAND_EXPAND_LISTS
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:SDL2_image::SDL2_image>
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND_EXPAND_LISTS
         COMMENT "Copy SDL libs...\n"
 )
-#add_custom_command(
-#    TARGET ${PROJECT_NAME} POST_BUILD
-#    COMMAND ${CMAKE_COMMAND} -E copy_directory
-#        ${CMAKE_CURRENT_SOURCE_DIR}/fonts
-#        $<TARGET_FILE_DIR:${PROJECT_NAME}>/fonts
-#        COMMAND_EXPAND_LISTS
-#        COMMENT "Copy fonts...\n"
-#)
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/fonts
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources/fonts
+        COMMAND_EXPAND_LISTS
+        COMMENT "Copy fonts...\n"
+)
 
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin
@@ -89,4 +93,7 @@ install(IMPORTED_RUNTIME_ARTIFACTS
 install(IMPORTED_RUNTIME_ARTIFACTS
     SDL2_ttf::SDL2_ttf DESTINATION bin
 )
-#install(FILES ${FONTS} DESTINATION fonts)
+install(IMPORTED_RUNTIME_ARTIFACTS
+    SDL2_image::SDL2_image DESTINATION bin
+)
+install(FILES ${FONTS} DESTINATION Resources/fonts)
