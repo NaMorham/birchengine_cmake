@@ -1,0 +1,15 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+*.png -text
+*.gif -text
+*.bmp -text
+*.ico -text
+*.icns -text
+*.blz -text
+*.dat -text
+*.jpg -text
+*.jpeg -text
+*.ttf -text
+*.zip -text
+*.tgz -text
+*.pdf -text

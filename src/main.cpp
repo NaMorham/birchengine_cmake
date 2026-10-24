@@ -1,54 +1,33 @@
-#include <iostream>
-#ifdef _MSC_FULL_VER
-#define SDL_MAIN_HANDLED  // Linker error about main without this
-#endif
-#include <SDL.h>
+#include <filesystem>
+#include "Game.h"
 
-void DumpArgs(const int argc, const char* const * argv);
+Birch::Game *game = nullptr;
 
 int main(int argc, char *argv[])
 {
-	SDL_Window* pWindow = nullptr;
-	SDL_Renderer* pRenderer = nullptr;
+    SDL_SetMainReady();
 
-	DumpArgs(argc, argv);
+    // calculate the absolute path to the executable so we can locate the fonts folder
+    std::filesystem::path arg0(argv[0]);
+    if (arg0.is_relative()) {
+        arg0 = std::filesystem::canonical(arg0);
+    }
+#if defined(_DEBUG) || defined(DEBUG)
+    std::cerr << "arg0: " << arg0 << std::endl;
+#endif
 
-	SDL_SetMainReady();
-	SDL_Init(SDL_INIT_EVERYTHING);
+    game = new Birch::Game(arg0);
+    if (!game->init("GameWindow", 800, 600, false))
+    {
+        std::cerr << "Failed to initialise: " << SDL_GetError() << std::endl;
+    }
+    while (game->running())
+    {
+        game->handleEvents();
+        game->update();
+        game->render();
+    }
 
-	pWindow = SDL_CreateWindow("Title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_SHOWN);
-	if (!pWindow)
-	{
-		return EXIT_FAILURE;
-	}
-
-	pRenderer = SDL_CreateRenderer(pWindow, -1, 0);
-	if (!pRenderer)
-	{
-		SDL_DestroyWindow(pWindow);
-		pWindow = nullptr;
-		return EXIT_FAILURE;
-	}
-
-	SDL_SetRenderDrawColor(pRenderer, 0, 0x0f, 0x7f, 0xff);
-
-	SDL_RenderClear(pRenderer);
-
-	SDL_RenderPresent(pRenderer);
-
-	SDL_Delay(5000);
-
-	return 0;
-}
-
-void DumpArgs(const int argc, const char* const* argv)
-{
-	std::cerr << argv[0] << " called with " << argc-1
-	    << (argc == 2 ? " argument." : " arguments.") << std::endl;
-
-	for (int idx = 1; idx < argc; idx++)
-	{
-		std::cerr << "\t" << idx << ": '" << *(argv + idx) << "'" << std::endl;
-	}
-	std::cerr << std::endl;
+    game->clean();
+    return 0;
 }
