@@ -37,11 +37,11 @@ set (ECS_HDRS
 )
 
 set (ASSETS
-	Resources/assets/dirt.png
-	Resources/assets/enemy.png
-	Resources/assets/grass.png
-	Resources/assets/player.png
-	Resources/assets/water.png
+    Resources/assets/dirt.png
+    Resources/assets/enemy.png
+    Resources/assets/grass.png
+    Resources/assets/player.png
+    Resources/assets/water.png
 )
 
 set (EXTRAS
@@ -51,7 +51,8 @@ set (EXTRAS
     LICENSE
 )
 
-source_group("Header Files" FILES ${HDRS} ${ECS_HDRS})
+source_group("Header Files" FILES ${HDRS})
+source_group("Header Files/ECS" FILES ${ECS_HDRS})
 source_group("Resource Files/assets" FILES ${ASSETS})
 source_group("Resource Files/fonts" FILES ${FONTS})
 source_group("Source Files" FILES ${SRCS})
