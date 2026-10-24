@@ -11,21 +11,21 @@ find_package(SDL2_image REQUIRED)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set (SRCS
-    src/main.cpp
-    src/Game.cpp
+#    src/main.cpp
+#    src/Game.cpp
 )
 
 set (HDRS
     include/BirchEngineVer.h
-    include/Game.h    
+#    include/Game.h    
 )
 
-set (FONTS
-    Resources/fonts/cour.ttf
-    Resources/fonts/courbd.ttf
-    Resources/fonts/courbi.ttf
-    Resources/fonts/couri.ttf
-)
+#set (FONTS
+#    Resources/fonts/cour.ttf
+#    Resources/fonts/courbd.ttf
+#    Resources/fonts/courbi.ttf
+#    Resources/fonts/couri.ttf
+#)
 
 set (EXTRAS
     BirchEngineVer.h.in
@@ -35,11 +35,12 @@ set (EXTRAS
 )
 
 source_group("Header Files" FILES ${HDRS})
-source_group("Resource Files/fonts" FILES ${FONTS})
+#source_group("Resource Files/fonts" FILES ${FONTS})
 source_group("Source Files" FILES ${SRCS})
 source_group("Extra Files" FILES ${EXTRAS})
 
-add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} ${FONTS} ${EXTRAS})
+#add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} ${FONTS} ${EXTRAS})
+add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} ${EXTRAS})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
    VS_STARTUP_PROJECT ${PROJECT_NAME}
@@ -73,14 +74,14 @@ add_custom_command(
         COMMAND_EXPAND_LISTS
         COMMENT "Copy SDL libs...\n"
 )
-add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/fonts
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources/fonts
-        COMMAND_EXPAND_LISTS
-        COMMENT "Copy fonts...\n"
-)
+#add_custom_command(
+#    TARGET ${PROJECT_NAME} POST_BUILD
+#    COMMAND ${CMAKE_COMMAND} -E copy_directory
+#        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/fonts
+#        $<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources/fonts
+#        COMMAND_EXPAND_LISTS
+#        COMMENT "Copy fonts...\n"
+#)
 
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin
@@ -96,4 +97,5 @@ install(IMPORTED_RUNTIME_ARTIFACTS
 install(IMPORTED_RUNTIME_ARTIFACTS
     SDL2_image::SDL2_image DESTINATION bin
 )
-install(FILES ${FONTS} DESTINATION Resources/fonts)
+#install(FILES ${FONTS} DESTINATION Resources/fonts)
+
