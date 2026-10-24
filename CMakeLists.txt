@@ -1,46 +1,63 @@
 cmake_minimum_required(VERSION 3.21...4.4)
 
-project(BirchEngine VERSION 1.0.0)
+project(BirchEngine VERSION 1.0.0.1)
 
 configure_file(BirchEngineVer.h.in include/BirchEngineVer.h)
 
 find_package(SDL2 REQUIRED)
-find_package(SDL2_ttf REQUIRED)
 find_package(SDL2_image REQUIRED)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set (SRCS
-#    src/main.cpp
-#    src/Game.cpp
+    src/Collision.cpp
+    src/Game.cpp
+    src/Map.cpp
+    src/TextureManager.cpp
+    src/Vector2D.cpp
+    src/main.cpp
 )
 
 set (HDRS
     include/BirchEngineVer.h
-#    include/Game.h    
+    include/Collision.h
+    include/Game.h
+    include/Map.h
+    include/TextureManager.h
+    include/Vector2D.h
 )
 
-#set (FONTS
-#    Resources/fonts/cour.ttf
-#    Resources/fonts/courbd.ttf
-#    Resources/fonts/courbi.ttf
-#    Resources/fonts/couri.ttf
-#)
+set (ECS_HDRS
+    include/ECS/ColliderComponent.h
+    include/ECS/Components.h
+    include/ECS/ECS.h
+    include/ECS/KeyboardController.h
+    include/ECS/SpriteComponent.h
+    include/ECS/TransformComponent.h
+)
+
+set (ASSETS
+	Resources/assets/dirt.png
+	Resources/assets/enemy.png
+	Resources/assets/grass.png
+	Resources/assets/player.png
+	Resources/assets/water.png
+)
 
 set (EXTRAS
     BirchEngineVer.h.in
     README.md
-#    TODO.md
+    TODO.md
     LICENSE
 )
 
-source_group("Header Files" FILES ${HDRS})
-#source_group("Resource Files/fonts" FILES ${FONTS})
+source_group("Header Files" FILES ${HDRS} ${ECS_HDRS})
+source_group("Resource Files/assets" FILES ${ASSETS})
+source_group("Resource Files/fonts" FILES ${FONTS})
 source_group("Source Files" FILES ${SRCS})
 source_group("Extra Files" FILES ${EXTRAS})
 
-#add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} ${FONTS} ${EXTRAS})
-add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} ${EXTRAS})
+add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} ${ECS_HDRS} ${ASSETS} ${EXTRAS})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
    VS_STARTUP_PROJECT ${PROJECT_NAME}
@@ -56,7 +73,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${SDL2_INCLUDE_DIRS}
 )
 
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2_ttf::SDL2_ttf)
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2_image::SDL2_image)
 
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
@@ -65,23 +82,19 @@ add_custom_command(
         $<TARGET_FILE_DIR:${PROJECT_NAME}>
         COMMAND_EXPAND_LISTS
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:SDL2_ttf::SDL2_ttf>
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>
-        COMMAND_EXPAND_LISTS
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:SDL2_image::SDL2_image>
         $<TARGET_FILE_DIR:${PROJECT_NAME}>
         COMMAND_EXPAND_LISTS
         COMMENT "Copy SDL libs...\n"
 )
-#add_custom_command(
-#    TARGET ${PROJECT_NAME} POST_BUILD
-#    COMMAND ${CMAKE_COMMAND} -E copy_directory
-#        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/fonts
-#        $<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources/fonts
-#        COMMAND_EXPAND_LISTS
-#        COMMENT "Copy fonts...\n"
-#)
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/assets
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources/assets
+        COMMAND_EXPAND_LISTS
+        COMMENT "Copy assets...\n"
+)
 
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin
@@ -92,10 +105,6 @@ install(IMPORTED_RUNTIME_ARTIFACTS
     SDL2::SDL2 DESTINATION bin
 )
 install(IMPORTED_RUNTIME_ARTIFACTS
-    SDL2_ttf::SDL2_ttf DESTINATION bin
-)
-install(IMPORTED_RUNTIME_ARTIFACTS
     SDL2_image::SDL2_image DESTINATION bin
 )
-#install(FILES ${FONTS} DESTINATION Resources/fonts)
-
+install(FILES ${ASSETS} DESTINATION Resources/assets)
