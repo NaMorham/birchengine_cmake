@@ -33,6 +33,7 @@ set (ECS_HDRS
     include/ECS/ECS.h
     include/ECS/KeyboardController.h
     include/ECS/SpriteComponent.h
+    include/ECS/TileComponent.h
     include/ECS/TransformComponent.h
 )
 
