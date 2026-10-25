@@ -43,6 +43,7 @@ set (ASSETS
     Resources/assets/grass.png
     Resources/assets/player.png
     Resources/assets/water.png
+    Resources/assets/p16x16.map
 )
 
 set (EXTRAS
