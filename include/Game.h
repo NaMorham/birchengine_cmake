@@ -17,7 +17,7 @@ public:
 
     void handleEvents();
     void update();
-    bool running() { return isRunning; }
+    bool running() const { return isRunning; }
     void render();
     void clean();
 
@@ -28,5 +28,5 @@ public:
 private:
     bool isRunning = false;
     int cnt = 0;
-    SDL_Window *window;
+    SDL_Window* window{ nullptr };
 };

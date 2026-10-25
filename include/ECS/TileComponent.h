@@ -8,16 +8,17 @@
 class TileComponent : public Component
 {
 public:
-    TransformComponent *transform;
-    SpriteComponent *sprite;
+    TransformComponent *transform{ nullptr };
+    SpriteComponent *sprite{ nullptr };
 
-    SDL_Rect tileRect;
-    int tileID;
-    const char* path;
+    SDL_Rect tileRect{ 0, 0, 0, 0 };
+    int tileID{ -1 };
+    const char* path{ nullptr };
 
     TileComponent() = default;
 
     TileComponent(int x, int y, int w, int h, int id)
+        : path{ nullptr }, sprite{ nullptr }, transform{ nullptr }
     {
         tileRect.x = x;
         tileRect.y = y;

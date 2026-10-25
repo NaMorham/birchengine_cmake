@@ -20,7 +20,7 @@ auto& tile0(manager.addEntity());
 auto& tile1(manager.addEntity());
 auto& tile2(manager.addEntity());
 
-Game::Game()
+Game::Game() : window{ nullptr }
 {}
 
 Game::~Game()
@@ -69,8 +69,6 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
 void Game::handleEvents()
 {
-    SDL_Scancode scanCode;
-
     SDL_PollEvent(&event);
 
     switch (event.type)
@@ -81,15 +79,15 @@ void Game::handleEvents()
     case SDL_KEYDOWN:
         break;
     case SDL_KEYUP:
-        scanCode = event.key.keysym.scancode;
-        switch (scanCode)
+        switch (Game::event.key.keysym.sym)
         {
-        case SDL_SCANCODE_ESCAPE:
-        case SDL_SCANCODE_R:
+        case SDLK_ESCAPE:
+        case SDLK_q:
             isRunning = false;
             break;
+        default:
+            break;
         }
-        break;
     default:
         break;
     }
