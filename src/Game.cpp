@@ -18,10 +18,10 @@ auto& wall(manager.addEntity());
 
 enum groupLabels : std::size_t
 {
-	groupMap,
-	groupPlayers,
-	groupEnemies,
-	groupColliders
+    groupMap,
+    groupPlayers,
+    groupEnemies,
+    groupColliders
 };
 
 Game::Game() : window{ nullptr }
@@ -57,15 +57,15 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
     Map::LoadMap("Resources/assets/p16x16.map", 16, 16);
 
     player.addComponent<TransformComponent>(2);
-    player.addComponent<SpriteComponent>("Resources/assets/player_idle.png", 4, 100);
+    player.addComponent<SpriteComponent>("Resources/assets/player_anims.png", true);
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
-	player.addGroup(groupPlayers);
+    player.addGroup(groupPlayers);
 
     wall.addComponent<TransformComponent>(300.0f, 300.0f, 300, 20, 1);
     wall.addComponent<SpriteComponent>("Resources/assets/dirt.png");
     wall.addComponent<ColliderComponent>("wall");
-	wall.addGroup(groupMap);
+    wall.addGroup(groupMap);
 }
 
 void Game::handleEvents()

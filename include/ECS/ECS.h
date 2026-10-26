@@ -48,9 +48,9 @@ public:
 class Entity
 {
 private:
-	Manager& manager;
-	bool active = true;
-	std::vector<std::unique_ptr<Component>> components;
+    Manager& manager;
+    bool active = true;
+    std::vector<std::unique_ptr<Component>> components;
 
     ComponentArray componentArray;
     ComponentBitSet componentBitset;

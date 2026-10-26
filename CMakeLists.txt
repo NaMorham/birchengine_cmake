@@ -18,6 +18,10 @@ set (SRCS
     src/main.cpp
 )
 
+set (ECS_SRCS
+    src/ECS/ECS.cpp
+)
+
 set (HDRS
     include/BirchEngineVer.h
     include/Collision.h
@@ -28,6 +32,7 @@ set (HDRS
 )
 
 set (ECS_HDRS
+    include/ECS/Animation.h
     include/ECS/ColliderComponent.h
     include/ECS/Components.h
     include/ECS/ECS.h
@@ -42,6 +47,7 @@ set (ASSETS
     Resources/assets/enemy.png
     Resources/assets/grass.png
     Resources/assets/player.png
+    Resources/assets/player_anims.png
     Resources/assets/player_idle.png
     Resources/assets/water.png
     Resources/assets/p16x16.map
@@ -59,9 +65,10 @@ source_group("Header Files/ECS" FILES ${ECS_HDRS})
 source_group("Resource Files/assets" FILES ${ASSETS})
 source_group("Resource Files/fonts" FILES ${FONTS})
 source_group("Source Files" FILES ${SRCS})
+source_group("Source Files/ECS" FILES ${ECS_SRCS})
 source_group("Extra Files" FILES ${EXTRAS})
 
-add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} ${ECS_HDRS} ${ASSETS} ${EXTRAS})
+add_executable(${PROJECT_NAME} ${SRCS} ${ECS_SRCS} ${HDRS} ${ECS_HDRS} ${ASSETS} ${EXTRAS})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
    VS_STARTUP_PROJECT ${PROJECT_NAME}
