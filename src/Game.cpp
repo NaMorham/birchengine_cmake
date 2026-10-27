@@ -12,11 +12,12 @@ SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 
 std::vector<ColliderComponent*> Game::colliders;
+bool Game::isRunning = false;
 
 auto& player(manager.addEntity());
 auto& wall(manager.addEntity());
 
-const char* mapfile = "assets/terrain_ss.png";
+const char* mapfile = "Resources/assets/terrain_ss.png";
 
 enum groupLabels : std::size_t
 {
@@ -25,6 +26,10 @@ enum groupLabels : std::size_t
     groupEnemies,
     groupColliders
 };
+
+auto& tiles(manager.getGroup(groupMap));
+auto& players(manager.getGroup(groupPlayers));
+auto& enemies(manager.getGroup(groupEnemies));
 
 Game::Game() : window{ nullptr }
 {}
@@ -58,7 +63,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
     Map::LoadMap("Resources/assets/map.map", 25, 20);
 
-    player.addComponent<TransformComponent>(4);
+    player.addComponent<TransformComponent>(400, 320, 32, 32, 2);
     player.addComponent<SpriteComponent>("Resources/assets/player_anims.png", true);
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
@@ -74,16 +79,6 @@ void Game::handleEvents()
     case SDL_QUIT :
         isRunning = false;
         break;
-    case SDL_KEYUP:
-        switch (event.key.keysym.sym)
-        {
-        case SDLK_ESCAPE:
-        case SDLK_q:
-            isRunning = false;
-            break;
-        default:
-            break;
-        }
     default:
         break;
     }
@@ -94,15 +89,15 @@ void Game::update()
     manager.refresh();
     manager.update();
 
-    for (auto cc : colliders)
+    Vector2D pVel = player.getComponent<TransformComponent>().velocity;
+    int pSpeed = player.getComponent<TransformComponent>().speed;
+
+    for (auto t : tiles)
     {
-        Collision::AABB(player.getComponent<ColliderComponent>(), *cc);
+        t->getComponent<TileComponent>().destRect.x += -(pVel.x * pSpeed);
+        t->getComponent<TileComponent>().destRect.y += -(pVel.y * pSpeed);
     }
 }
-
-auto& tiles(manager.getGroup(groupMap));
-auto& players(manager.getGroup(groupPlayers));
-auto& enemies(manager.getGroup(groupEnemies));
 
 void Game::render()
 {

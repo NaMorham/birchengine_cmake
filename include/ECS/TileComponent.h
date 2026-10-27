@@ -1,15 +1,11 @@
 #pragma once
 
 #include "ECS.h"
-#include "TransformComponent.h"
-#include "SpriteComponent.h"
 #include "SDL.h"
 
 class TileComponent : public Component
 {
 public:
-    TransformComponent *transform{ nullptr };
-    SpriteComponent *sprite{ nullptr };
 
     SDL_Texture* texture{ nullptr };
     SDL_Rect srcRect{ 0, 0, 0, 0 }, destRect{ 0, 0, 0, 0 };

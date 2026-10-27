@@ -19,10 +19,10 @@ private:
 
 public:
 
-    int animIndex = 0;
-    std::map<const char*, Animation> animations;
+    int animIndex{ 0 };
+    std::map<const char*, Animation> animations{};
 
-    SDL_RendererFlip spriteFlip = SDL_FLIP_NONE;
+    SDL_RendererFlip spriteFlip{ SDL_FLIP_NONE };
 
     SpriteComponent() = default;
     SpriteComponent(const char* path)
