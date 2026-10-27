@@ -12,6 +12,12 @@ Vector2D::Vector2D(float x, float y)
     this->y = y;
 }
 
+Vector2D::Vector2D(int x, int y)
+{
+    this->x = static_cast<float>(x);
+    this->y = static_cast<float>(y);
+}
+
 Vector2D& Vector2D::Add(const Vector2D& vec)
 {
     this->x += vec.x;

@@ -65,7 +65,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
     Map::LoadMap("Resources/assets/map.map", 25, 20);
 
-    player.addComponent<TransformComponent>(400, 320, 32, 32, 2);
+    player.addComponent<TransformComponent>(400.0f, 320.0f, 32, 32, 2);
     player.addComponent<SpriteComponent>("Resources/assets/player_anims.png", true);
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
@@ -91,8 +91,8 @@ void Game::update()
     manager.refresh();
     manager.update();
 
-    camera.x = player.getComponent<TransformComponent>().position.x - 400;
-    camera.y = player.getComponent<TransformComponent>().position.y - 320;
+    camera.x = static_cast<int>(player.getComponent<TransformComponent>().position.x - 400.0f);
+    camera.y = static_cast<int>(player.getComponent<TransformComponent>().position.y - 320.0f);
 
     if (camera.x < 0)
         camera.x = 0;

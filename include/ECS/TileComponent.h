@@ -7,8 +7,8 @@ class TileComponent : public Component
 {
 public:
     SDL_Texture* texture{ nullptr };
-    SDL_Rect srcRect{ 0, 0, 0, 0 }, destRect{ 0, 0, 0, 0 };
     Vector2D position{ 0.0f, 0.0f };
+    SDL_Rect srcRect{ 0, 0, 0, 0 }, destRect{ 0, 0, 0, 0 };
 
     TileComponent() = default;
 
@@ -18,25 +18,18 @@ public:
     }
 
     TileComponent(int srcX, int srcY, int xpos, int ypos, const char* path)
+        : position{ xpos, ypos }, srcRect{ srcX, srcY }
     {
         texture = TextureManager::LoadTexture(path);
-
-        position.x = xpos;
-        position.y = ypos;
-
-        srcRect.x = srcX;
-        srcRect.y = srcY;
         srcRect.w = srcRect.h = 32;
-
-        destRect.x = xpos;
-        destRect.y = ypos;
         destRect.w = destRect.h = 64;
     }
 
     void update() override
     {
-        destRect.x = position.x - Game::camera.x;
-        destRect.y = position.y - Game::camera.y;
+        // TODO: operator- that handles SDL_Rect?
+        destRect.x = static_cast<int>(position.x) - Game::camera.x;
+        destRect.y = static_cast<int>(position.y) - Game::camera.y;
     }
 
     void draw() override
