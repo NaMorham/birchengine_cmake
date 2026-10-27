@@ -52,12 +52,12 @@
 ###############################################################################
 # Doc, Resource and Archive files
 ###############################################################################
-*.blz -text
-*.dat -text
-*.ttf -text
+*.blz   -text
+*.dat   -text
+*.ttf   -text
 *.zip   binary
 *.tgz   binary
-*.pdf -text
+*.pdf   -text
 
 ###############################################################################
 # diff behavior for common document formats

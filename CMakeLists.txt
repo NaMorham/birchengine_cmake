@@ -12,10 +12,10 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set (SRCS
     src/Collision.cpp
     src/Game.cpp
+    src/main.cpp
     src/Map.cpp
     src/TextureManager.cpp
     src/Vector2D.cpp
-    src/main.cpp
 )
 
 set (ECS_SRCS
@@ -32,6 +32,7 @@ set (HDRS
 )
 
 set (ECS_HDRS
+    include/ECS/Animation.h
     include/ECS/ColliderComponent.h
     include/ECS/Components.h
     include/ECS/ECS.h
@@ -42,13 +43,9 @@ set (ECS_HDRS
 )
 
 set (ASSETS
-    Resources/assets/dirt.png
-    Resources/assets/enemy.png
-    Resources/assets/grass.png
-    Resources/assets/player.png
-    Resources/assets/player_idle.png
-    Resources/assets/water.png
-    Resources/assets/p16x16.map
+    Resources/assets/map.map
+    Resources/assets/player_anims.png
+    Resources/assets/terrain_ss.png
 )
 
 set (EXTRAS
