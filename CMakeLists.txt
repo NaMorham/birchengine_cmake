@@ -32,7 +32,6 @@ set (HDRS
 )
 
 set (ECS_HDRS
-    include/ECS/Animation.h
     include/ECS/ColliderComponent.h
     include/ECS/Components.h
     include/ECS/ECS.h
@@ -47,7 +46,6 @@ set (ASSETS
     Resources/assets/enemy.png
     Resources/assets/grass.png
     Resources/assets/player.png
-    Resources/assets/player_anims.png
     Resources/assets/player_idle.png
     Resources/assets/water.png
     Resources/assets/p16x16.map

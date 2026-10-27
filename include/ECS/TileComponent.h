@@ -18,7 +18,6 @@ public:
     TileComponent() = default;
 
     TileComponent(int x, int y, int w, int h, int id)
-        : path{ nullptr }, sprite{ nullptr }, transform{ nullptr }
     {
         tileRect.x = x;
         tileRect.y = y;
