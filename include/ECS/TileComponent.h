@@ -17,12 +17,12 @@ public:
         SDL_DestroyTexture(texture);
     }
 
-    TileComponent(int srcX, int srcY, int xpos, int ypos, const char* path)
-        : position{ xpos, ypos }, srcRect{ srcX, srcY }
+    TileComponent(int srcX, int srcY, int xpos, int ypos, int tsize, int tscale, const char* path)
+        : position{ xpos, ypos }, srcRect{ srcX, srcY }, destRect{ xpos, ypos }
     {
         texture = TextureManager::LoadTexture(path);
-        srcRect.w = srcRect.h = 32;
-        destRect.w = destRect.h = 64;
+        srcRect.w = srcRect.h = tsize;
+        destRect.w = destRect.h = tsize * tscale;
     }
 
     void update() override

@@ -2,8 +2,15 @@
 
 Game *game = nullptr;
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
+    if (argc > 1)
+    {
+        // TODO: Handle cli params to show collision tiles?
+        for (int argIdx = 1; argIdx < argc; ++argIdx) {
+            std::cerr << "Arg " << argIdx << " '" << argv[argIdx] << "'" << std::endl;
+        }
+    }
     const int FPS = 60;
     const int frameDelay = 1000 / FPS;
 

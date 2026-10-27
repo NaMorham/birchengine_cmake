@@ -43,6 +43,8 @@ set (ECS_HDRS
 )
 
 set (ASSETS
+    Resources/assets/collisionmap.txt
+    Resources/assets/ColTex.png
     Resources/assets/map.map
     Resources/assets/player_anims.png
     Resources/assets/terrain_ss.png

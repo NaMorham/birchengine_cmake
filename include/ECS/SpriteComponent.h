@@ -18,7 +18,6 @@ private:
     int speed{ 100 };
 
 public:
-
     int animIndex{ 0 };
     std::map<const char*, Animation> animations{};
 
