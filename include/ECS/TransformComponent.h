@@ -23,6 +23,7 @@ public:
         : scale{ sc }
     {
         position.Zero();
+        scale = sc;
         //velocity.Zero();
     }
 
@@ -43,7 +44,5 @@ public:
     }
     void update() override
     {
-        position.x += velocity.x * speed;
-        position.y += velocity.y * speed;
     }
 };
