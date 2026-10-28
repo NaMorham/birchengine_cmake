@@ -10,6 +10,7 @@ find_package(SDL2_image REQUIRED)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set (SRCS
+    src/AssetManager.cpp
     src/Collision.cpp
     src/Game.cpp
     src/main.cpp
@@ -23,6 +24,7 @@ set (ECS_SRCS
 )
 
 set (HDRS
+    include/AssetManager.h
     include/BirchEngineVer.h
     include/Collision.h
     include/Game.h
@@ -37,6 +39,7 @@ set (ECS_HDRS
     include/ECS/Components.h
     include/ECS/ECS.h
     include/ECS/KeyboardController.h
+    include/ECS/Projectile.h
     include/ECS/SpriteComponent.h
     include/ECS/TileComponent.h
     include/ECS/TransformComponent.h
@@ -47,6 +50,7 @@ set (ASSETS
     Resources/assets/ColTex.png
     Resources/assets/map.map
     Resources/assets/player_anims.png
+    Resources/assets/proj.png
     Resources/assets/terrain_ss.png
 )
 
@@ -122,3 +126,4 @@ install(IMPORTED_RUNTIME_ARTIFACTS
     SDL2_image::SDL2_image DESTINATION bin
 )
 install(FILES ${ASSETS} DESTINATION Resources/assets)
+

@@ -16,20 +16,20 @@ public:
     TransformComponent()
     {
         position.Zero();
-        velocity.Zero();
+        //velocity.Zero();
     }
 
     TransformComponent(int sc)
         : scale{ sc }
     {
         position.Zero();
-        velocity.Zero();
+        //velocity.Zero();
     }
 
     TransformComponent(float x, float y)
         : position{ x, y }
     {
-        velocity.Zero();
+        //velocity.Zero();
     }
 
     TransformComponent(float x, float y, int h, int w, int sc)
