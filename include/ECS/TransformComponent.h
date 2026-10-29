@@ -23,7 +23,6 @@ public:
         : scale{ sc }
     {
         position.Zero();
-        scale = sc;
         //velocity.Zero();
     }
 
