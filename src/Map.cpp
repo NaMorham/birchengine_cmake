@@ -21,6 +21,11 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
     std::fstream mapFile;
     mapFile.open(path);
 
+    if (!mapFile.is_open())
+    {
+        std::cerr << "Failed to open map file: '" << path.c_str() << "'" << std::endl;
+    }
+
     int srcX, srcY;
 
     for (int y = 0; y < sizeY; y++)
@@ -59,6 +64,6 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 void Map::AddTile(int srcX, int srcY, int xpos, int ypos)
 {
     auto& tile(manager.addEntity());
-    tile.addComponent<TileComponent>(srcX, srcY, xpos, ypos, mapFilePath);
+    tile.addComponent<TileComponent>(srcX, srcY, xpos, ypos, tileSize, mapScale, mapFilePath);
     tile.addGroup(Game::groupMap);
 }

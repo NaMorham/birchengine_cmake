@@ -13,6 +13,8 @@ public:
     int scale{ 1 };
     int speed{ 3 };
 
+    bool blocked = false;
+
     TransformComponent()
     {
         position.Zero();
@@ -43,5 +45,8 @@ public:
     }
     void update() override
     {
+        position.x += static_cast<int>(velocity.x * speed);
+        position.y += static_cast<int>(velocity.y * speed);
     }
+
 };
