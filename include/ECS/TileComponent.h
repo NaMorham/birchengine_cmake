@@ -20,7 +20,8 @@ public:
     }
 
     TileComponent(int srcX, int srcY, int xpos, int ypos, int tsize, int tscale, const char* path)
-        : srcRect{ srcX, srcY }, destRect{ xpos, ypos }, position{ 0.0f, 0.0f }
+        : srcRect{ srcX, srcY }, destRect{ xpos, ypos }, 
+          position{ static_cast<float>(xpos), static_cast<float>(ypos) }
     {
         texture = TextureManager::LoadTexture(path);
         srcRect.w = srcRect.h = tsize;
