@@ -24,6 +24,7 @@ public:
     static SDL_Renderer *renderer;
     static SDL_Event event;
     static bool isRunning;
+    static bool showColliders;
 
     static SDL_Rect camera;
 

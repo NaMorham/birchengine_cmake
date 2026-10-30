@@ -39,6 +39,9 @@ public:
                 transform->velocity.y = 1;
                 sprite->Play("Walk");
                 break;
+            case SDLK_c:
+                Game::showColliders = !Game::showColliders;
+                break;
             default:
                 break;
             }

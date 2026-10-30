@@ -14,6 +14,7 @@ SDL_Event Game::event;
 SDL_Rect Game::camera = { 0,0,1600,1280 };
 
 bool Game::isRunning = false;
+bool Game::showColliders{ false };
 
 auto& player(manager.addEntity());
 
@@ -125,18 +126,19 @@ void Game::render()
         t->draw();
     }
 
-/*
-#if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
-    idx=1;
-#endif
-    for (auto& c : colliders)
+    if (showColliders)
     {
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
-        std::cerr << "Draw collider " << idx++ << "/" << colliders.size() << std::endl;
+	    idx=1;
 #endif
-        c->draw();
+	    for (auto& c : colliders)
+	    {
+#if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
+	        std::cerr << "Draw collider " << idx++ << "/" << colliders.size() << std::endl;
+#endif
+	        c->draw();
+	    }
     }
-*/
 
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
     idx = 1;
