@@ -4,6 +4,7 @@
 #include "ECS/Components.h"
 #include "Vector2D.h"
 #include "Collision.h"
+#include "AssetManager.h"
 
 Map* map;
 Manager manager;
@@ -12,6 +13,8 @@ SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 
 SDL_Rect Game::camera = { 0,0,1600,1280 };
+
+AssetManager* Game::assets = new AssetManager(&manager);
 
 bool Game::isRunning = false;
 bool Game::showColliders{ false };
@@ -41,7 +44,6 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER) == 0)
     {
         window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
-        //renderer = SDL_CreateRenderer(window, -1, 0);
         renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
         if (renderer)
         {
@@ -51,22 +53,32 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
         isRunning = true;
     }
 
-    map = new Map("Resources/assets/terrain_ss.png", 3, 32);
+    assets->AddTexture("terrain", "Resources/assets/terrain_ss.png");
+    assets->AddTexture("player", "Resources/assets/player_anims.png");
+    assets->AddTexture("projectile", "Resources/assets/proj.png");
+
+    map = new Map("terrain", 3, 32);
     //ecs implementation
 
     map->LoadMap("Resources/assets/map.map", 25, 20);
 
     player.addComponent<TransformComponent>(800.0f, 640.0f, 32 , 32, 2);
-    player.addComponent<SpriteComponent>("Resources/assets/player_anims.png", true);
+    player.addComponent<SpriteComponent>("player", true);
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
     player.addGroup(groupPlayers);
+
+    assets->CreateProjectile(Vector2D(600, 600), Vector2D(2,0),200, 2, "projectile");
+    assets->CreateProjectile(Vector2D(600, 620), Vector2D(2, 0), 200, 2, "projectile");
+    assets->CreateProjectile(Vector2D(400, 600), Vector2D(2, 1), 200, 2, "projectile");
+    assets->CreateProjectile(Vector2D(600, 600), Vector2D(2, -1), 200, 2, "projectile");
 
 }
 
 auto& tiles(manager.getGroup(Game::groupMap));
 auto& players(manager.getGroup(Game::groupPlayers));
 auto& colliders(manager.getGroup(Game::groupColliders));
+auto& projectiles(manager.getGroup(Game::groupProjectiles));
 
 void Game::handleEvents()
 {
@@ -96,6 +108,15 @@ void Game::update()
         if (Collision::AABB(cCol, playerCol))
         {
             player.getComponent<TransformComponent>().position = playerPos;
+        }
+    }
+
+    for (auto& p : projectiles)
+    {
+        if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
+        {
+            std::cout << "Hit player!" << std::endl;
+            p->destroy();
         }
     }
 
@@ -129,15 +150,15 @@ void Game::render()
     if (showColliders)
     {
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
-	    idx=1;
+        idx=1;
 #endif
-	    for (auto& c : colliders)
-	    {
+        for (auto& c : colliders)
+        {
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
-	        std::cerr << "Draw collider " << idx++ << "/" << colliders.size() << std::endl;
+            std::cerr << "Draw collider " << idx++ << "/" << colliders.size() << std::endl;
 #endif
-	        c->draw();
-	    }
+            c->draw();
+        }
     }
 
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
@@ -147,6 +168,17 @@ void Game::render()
     {
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
         std::cerr << "Draw players " << idx++ << "/" << players.size() << std::endl;
+#endif
+        p->draw();
+    }
+
+#if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
+    idx = 1;
+#endif
+    for (auto& p : projectiles)
+    {
+#if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
+        std::cerr << "Draw projectiles " << idx++ << "/" << projectiles.size() << std::endl;
 #endif
         p->draw();
     }
