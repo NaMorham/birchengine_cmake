@@ -49,7 +49,6 @@
 /build*/**
 
 ### CMake ###
-CMakeLists.txt
 CMakeLists.txt.user
 CMakeLists.txt-example
 CMakeCache.txt
