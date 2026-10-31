@@ -6,6 +6,7 @@ configure_file(BirchEngineVer.h.in include/BirchEngineVer.h)
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -43,6 +44,7 @@ set (ECS_HDRS
     include/ECS/SpriteComponent.h
     include/ECS/TileComponent.h
     include/ECS/TransformComponent.h
+    include/ECS/UILabel.h
 )
 
 set (ASSETS
@@ -51,6 +53,10 @@ set (ASSETS
     Resources/assets/map.map
     Resources/assets/player_anims.png
     Resources/assets/terrain_ss.png
+)
+
+set (FONTS
+    Resources/fonts/LiberationSans-Regular.ttf
 )
 
 set (EXTRAS
@@ -68,7 +74,7 @@ source_group("Source Files" FILES ${SRCS})
 source_group("Source Files/ECS" FILES ${ECS_SRCS})
 source_group("Extra Files" FILES ${EXTRAS})
 
-add_executable(${PROJECT_NAME} ${SRCS} ${ECS_SRCS} ${HDRS} ${ECS_HDRS} ${ASSETS} ${EXTRAS})
+add_executable(${PROJECT_NAME} ${SRCS} ${ECS_SRCS} ${HDRS} ${ECS_HDRS} ${ASSETS} ${FONTS} ${EXTRAS})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
    VS_STARTUP_PROJECT ${PROJECT_NAME}
@@ -90,7 +96,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${SDL2_INCLUDE_DIRS}
 )
 
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2_image::SDL2_image)
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf)
 
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
@@ -102,7 +108,11 @@ add_custom_command(
         $<TARGET_FILE:SDL2_image::SDL2_image>
         $<TARGET_FILE_DIR:${PROJECT_NAME}>
         COMMAND_EXPAND_LISTS
-        COMMENT "Copy SDL libs...\n"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:SDL2_ttf::SDL2_ttf>
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND_EXPAND_LISTS
+    COMMENT "Copy SDL libs...\n"
 )
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
@@ -110,7 +120,11 @@ add_custom_command(
         ${CMAKE_CURRENT_SOURCE_DIR}/Resources/assets
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources/assets
         COMMAND_EXPAND_LISTS
-    COMMENT "Copy assets...\n"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/fonts
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources/fonts
+        COMMAND_EXPAND_LISTS
+    COMMENT "Copy assets and fonts...\n"
 )
 
 install(TARGETS ${PROJECT_NAME}
@@ -124,5 +138,9 @@ install(IMPORTED_RUNTIME_ARTIFACTS
 install(IMPORTED_RUNTIME_ARTIFACTS
     SDL2_image::SDL2_image DESTINATION bin
 )
+install(IMPORTED_RUNTIME_ARTIFACTS
+    SDL2_ttf::SDL2_ttf DESTINATION bin
+)
 install(FILES ${ASSETS} DESTINATION Resources/assets)
+install(FILES ${FONTS} DESTINATION Resources/fonts)
 
