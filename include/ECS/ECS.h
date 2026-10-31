@@ -37,7 +37,7 @@ using ComponentArray = std::array<Component*, maxComponents>;
 class Component
 {
 public:
-    Entity* entity;
+    Entity* entity{ nullptr };  // pointer to the "owning" entity
 
     virtual void init() {}
     virtual void update() {}
@@ -52,12 +52,12 @@ private:
     bool active = true;
     std::vector<std::unique_ptr<Component>> components;
 
-    ComponentArray componentArray;
-    ComponentBitSet componentBitset;
-    GroupBitset groupBitset;
+    ComponentArray componentArray{};
+    ComponentBitSet componentBitset{};
+    GroupBitset groupBitset{};
 
 public:
-    Entity(Manager& mManager) : manager(mManager) {}
+    Entity(Manager& mManager) : manager{ mManager } {}
 
     void update()
     {
@@ -82,7 +82,8 @@ public:
         groupBitset[mGroup] = false;
     }
 
-    template <typename T> bool hasComponent() const
+    template <typename T>
+    bool hasComponent() const
     {
         return componentBitset[getComponentTypeID<T>()];
     }
@@ -102,7 +103,8 @@ public:
         return *c;
     }
 
-    template<typename T> T& getComponent() const
+    template<typename T>
+    T& getComponent() const
     {
         auto ptr(componentArray[getComponentTypeID<T>()]);
         return *static_cast<T*>(ptr);

@@ -5,6 +5,7 @@
 #include "../TextureManager.h"
 #include "Animation.h"
 #include <map>
+#include <string>
 #include "../AssetManager.h"
 
 class SpriteComponent : public Component
@@ -15,12 +16,12 @@ private:
     SDL_Rect srcRect{ 0, 0, 0, 0 }, destRect{0, 0, 0, 0 };
 
     bool animated{ false };
-    int frames{ 0 };
+    int frames{ 1 };
     int speed{ 100 };
 
 public:
     int animIndex{ 0 };
-    std::map<const char*, Animation> animations{};
+    std::map<std::string, Animation> animations{};
 
     SDL_RendererFlip spriteFlip{ SDL_FLIP_NONE };
 
@@ -84,11 +85,14 @@ public:
         TextureManager::Draw(texture, srcRect, destRect, spriteFlip);
     }
 
-    void Play(const char* animName)
+    void Play(const std::string& animName)
     {
-        frames = animations[animName].frames;
-        animIndex = animations[animName].index;
-        speed = animations[animName].speed;
+        // Use .at() so that play will not create a new entry if not found.
+        // TODO: defensive check to ensure an animation WAS actually found.
+        const Animation& anim = animations.at(animName);
+        frames = anim.frames;
+        animIndex = anim.index;
+        speed = anim.speed;
     }
 
 };

@@ -2,11 +2,11 @@
 
 struct Animation
 {
-    int index;
-    int frames;
-    int speed;
+    int index{ 0 };
+    int frames{ 1 };
+    int speed{ 100 };
 
-    Animation() {}
+    Animation() = default;
     Animation(int i, int f, int s)
     {
         index = i;

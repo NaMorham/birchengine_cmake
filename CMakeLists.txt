@@ -110,7 +110,7 @@ add_custom_command(
         ${CMAKE_CURRENT_SOURCE_DIR}/Resources/assets
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources/assets
         COMMAND_EXPAND_LISTS
-        COMMENT "Copy assets...\n"
+    COMMENT "Copy assets...\n"
 )
 
 install(TARGETS ${PROJECT_NAME}
