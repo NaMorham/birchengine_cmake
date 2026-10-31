@@ -4,7 +4,7 @@ Some of the TODOs identified to make this repository a bit more generic and port
 
 ## Project scope
 
-- [ ] **IMPORTANT** ensure description and README correctly credits 'Carl Birch' and links to channel/video & git respoitory.
+- [X] **IMPORTANT** ensure description and README correctly credits 'Carl Birch' and links to channel/video & git respoitory.
 - [ ] add CMake handling and remove thee manually generated visual studio solutions and projects.
 - [ ] add dependency documentation and build instructions to the README.
 

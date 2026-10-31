@@ -1,169 +1,213 @@
-#include <format>
-#include "../include/Game.h"
+#include "Game.h"
+#include "TextureManager.h"
+#include "Map.h"
+#include "ECS/Components.h"
+#include "Vector2D.h"
+#include "Collision.h"
+#include "AssetManager.h"
+#include <sstream>
 
-namespace Birch
+Map* map;
+Manager manager;
+
+SDL_Renderer* Game::renderer = nullptr;
+SDL_Event Game::event;
+
+SDL_Rect Game::camera = { 0,0,1600,1280 };
+
+AssetManager* Game::assets = new AssetManager(&manager);
+
+bool Game::isRunning = false;
+bool Game::showColliders{ false };
+
+auto& player(manager.addEntity());
+auto& label(manager.addEntity());
+
+Game::Game() : window{ nullptr }
+{}
+
+Game::~Game()
+{}
+
+void Game::init(const char* title, int width, int height, bool fullscreen)
 {
+    int flags = 0;
 
-    Game::Game(std::filesystem::path& exePath) : 
-        m_pRenderer(nullptr), m_pWindow(nullptr), m_title(""), m_exePath{ exePath }
+    if (fullscreen)
     {
-        std::cerr << "exe path: " << m_exePath << std::endl;
+        flags = SDL_WINDOW_FULLSCREEN;
     }
 
-    Game::~Game()
+    // Use dx 12 on windows
+#if defined(_WIN32) || defined(_WIN64)
+    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d12");
+#endif
+
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER) == 0)
     {
+        window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
+        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+        if (renderer)
+        {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        }
+
+        isRunning = true;
     }
 
-    bool Game::init(const char* title, int width, int height, bool fullscreen)
+    if (TTF_Init() == -1)
     {
-        int flags = 0;
-        m_isRunning = false;
-        m_width = width;
-        m_height = height;
-
-        if (fullscreen)
-        {
-            flags = SDL_WINDOW_FULLSCREEN;
-        }
-
-        if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-        {
-            std::cerr << "Failed to initialise SDL: " << SDL_GetError() << std::endl;
-            return false;
-        }
-        if (TTF_Init() != 0)
-        {
-            std::cerr << "Failed to initialise SDL fonts: " << SDL_GetError() << std::endl;
-            return false;
-        }
-
-        m_pWindow = SDL_CreateWindow(m_title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
-        if (m_pWindow == nullptr)
-        {
-            std::cerr << "Failed to create window: " << SDL_GetError() << std::endl;
-            return false;
-        }
-        m_pRenderer = SDL_CreateRenderer(m_pWindow, -1, 0);
-        if (m_pRenderer == nullptr)
-        {
-            std::cerr << "Failed to create renderer: " << SDL_GetError() << std::endl;
-            return false;
-        }
-        std::filesystem::path fontPath(m_exePath.parent_path() / "Resources" / "fonts" / "courbd.ttf");
-        m_pCourierFont = TTF_OpenFont(fontPath.make_preferred().string().c_str(), 12);
-        if (m_pCourierFont == nullptr)
-        {
-            std::cerr << "Failed to open font: " << SDL_GetError() << std::endl;
-            return false;
-        }
-
-        m_msPerFrame = (60.0f / static_cast<float>(m_desiredFps)) * 1000.0f;
-
-        m_isRunning = true;
-        return true;
+        std::cout << "Error : SDL_TTF" << std::endl;
     }
 
-    void Game::handleEvents()
+    assets->AddTexture("terrain", "Resources/assets/terrain_ss.png");
+    assets->AddTexture("player", "Resources/assets/player_anims.png");
+    assets->AddTexture("projectile", "Resources/assets/proj.png");
+
+    assets->AddFont("arial", "Resources/fonts/LiberationSans-Regular.ttf", 16);
+
+    map = new Map("terrain", 3, 32);
+    //ecs implementation
+
+    map->LoadMap("Resources/assets/map.map", 25, 20);
+
+    player.addComponent<TransformComponent>(800.0f, 640.0f, 32 , 32, 2);
+    player.addComponent<SpriteComponent>("player", true);
+    player.addComponent<KeyboardController>();
+    player.addComponent<ColliderComponent>("player");
+    player.addGroup(groupPlayers);
+
+    SDL_Color white = { 255, 255, 255, 255 };
+
+    label.addComponent<UILabel>(10, 10, "Test String", "arial", white);
+
+    assets->CreateProjectile(Vector2D(600, 600), Vector2D(2,0),200, 2, "projectile");
+    assets->CreateProjectile(Vector2D(600, 620), Vector2D(2, 0), 200, 2, "projectile");
+    assets->CreateProjectile(Vector2D(400, 600), Vector2D(2, 1), 200, 2, "projectile");
+    assets->CreateProjectile(Vector2D(600, 600), Vector2D(2, -1), 200, 2, "projectile");
+
+}
+
+auto& tiles(manager.getGroup(Game::groupMap));
+auto& players(manager.getGroup(Game::groupPlayers));
+auto& colliders(manager.getGroup(Game::groupColliders));
+auto& projectiles(manager.getGroup(Game::groupProjectiles));
+
+void Game::handleEvents()
+{
+    SDL_PollEvent(&event);
+
+    switch (event.type)
     {
-        SDL_Event event;
-        SDL_Scancode scanCode;
-
-        SDL_PollEvent(&event);
-
-        switch (event.type)
-        {
-        case SDL_QUIT:
-            m_isRunning = false;
-            break;
-        case SDL_KEYDOWN:
-            break;
-        case SDL_KEYUP:
-            scanCode = event.key.keysym.scancode;
-            switch (scanCode)
-            {
-            case SDL_SCANCODE_ESCAPE:
-            case SDL_SCANCODE_R:
-                m_isRunning = false;
-                break;
-            }
-            break;
-        default:
-            break;
-        }
+    case SDL_QUIT :
+        isRunning = false;
+        break;
+    default:
+        break;
     }
+}
 
-    void Game::update()
+void Game::update()
+{
+    SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
+    Vector2D playerPos = player.getComponent<TransformComponent>().position;
+
+    std::stringstream ss;
+    ss << "Player position: " << playerPos;
+    label.getComponent<UILabel>().SetLabelText(ss.str(), "arial");
+
+    manager.refresh();
+    manager.update();
+
+    for (auto& c : colliders)
     {
-        Uint64 tc = SDL_GetTicks64();
-        m_renderCount++;
-
-        this->m_deltaTicks = tc - this->m_lastFrameTime;
-        this->m_deltaTime = static_cast<float>(this->m_deltaTicks) / 1000.0;
-
-        // TODO: Add any actual update of game objects
-
-        this->m_lastFrameTime = tc;
-        if (this->m_deltaTicks < this->m_msPerFrame)
+        SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
+        if (Collision::AABB(cCol, playerCol))
         {
-            SDL_Delay(this->m_msPerFrame - this->m_deltaTicks);
+            player.getComponent<TransformComponent>().position = playerPos;
         }
     }
 
-    void Game::render()
+    for (auto& p : projectiles)
     {
-        if (!m_pRenderer)
+        if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
         {
-            std::cerr << "Missing or invalid renderer: " << SDL_GetError() << std::endl;
-            m_isRunning = false;
-            return;
+            std::cout << "Hit player!" << std::endl;
+            p->destroy();
         }
-        if (SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 16, 255))
-        {
-            std::cerr << "Failed to set Game render draw colour with error: " << SDL_GetError() << std::endl;
-            return;
-        }
-        if (SDL_RenderClear(m_pRenderer))
-        {
-            std::cerr << "Failed to clear renderer with error: " << SDL_GetError() << std::endl;
-            return;
-        }
-
-        // Render text
-        if (true) { // TODO: Update this check when we have a test for displaying
-            SDL_RenderSetScale(m_pRenderer, 1, 1);
-
-            float fps{ 60.0f / m_deltaTime };
-
-            std::string message{ std::format("Desired fps: {}, delta ticks: {}, delta time: {}, fps: {}",
-                m_desiredFps, m_deltaTicks, m_deltaTime, fps) };
-
-            m_pFontSurface = TTF_RenderText_Blended_Wrapped(m_pCourierFont, message.c_str(),
-                SDL_Color{ 255, 255, 255, 255 }, m_width - 20);
-            if (m_pTextTexture) {
-                SDL_DestroyTexture(m_pTextTexture);
-            }
-            m_pTextTexture = SDL_CreateTextureFromSurface(m_pRenderer, m_pFontSurface);
-            if (!m_pTextTexture) {
-                std::cerr << "Failed to create texture" << std::endl;
-                m_isRunning = false;
-                return;
-            }
-            m_textRect = { 10, 10, m_pFontSurface->w, m_pFontSurface->h };
-            SDL_FreeSurface(m_pFontSurface);
-            m_pFontSurface = nullptr;
-            SDL_RenderCopy(m_pRenderer, m_pTextTexture, NULL, &m_textRect);
-        }
-
-        SDL_RenderPresent(m_pRenderer);
     }
 
-    void Game::clean()
+    camera.x = static_cast<int>(player.getComponent<TransformComponent>().position.x - 400.0f);
+    camera.y = static_cast<int>(player.getComponent<TransformComponent>().position.y - 320.0f);
+
+    if (camera.x < 0)
+        camera.x = 0;
+    if (camera.y < 0)
+        camera.y = 0;
+    if (camera.x > camera.w)
+        camera.x = camera.w;
+    if (camera.y > camera.h)
+        camera.y = camera.h;
+}
+
+void Game::render()
+{
+#if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
+    size_t idx{ 1 };
+#endif
+    SDL_RenderClear(renderer);
+    for (auto& t : tiles)
     {
-        if (m_pCourierFont) { TTF_CloseFont(m_pCourierFont); m_pCourierFont = nullptr; }
-        if (m_pRenderer) { SDL_DestroyRenderer(m_pRenderer); m_pRenderer = nullptr; }
-        if (m_pWindow) { SDL_DestroyWindow(m_pWindow); m_pWindow = nullptr; }
-        TTF_Quit();
-        SDL_Quit();
+#if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
+        std::cerr << "Draw tile " << idx++ << "/" << tiles.size() << std::endl;
+#endif
+        t->draw();
     }
 
-}; // end namespace Birch
+    if (showColliders)
+    {
+#if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
+        idx=1;
+#endif
+        for (auto& c : colliders)
+        {
+#if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
+            std::cerr << "Draw collider " << idx++ << "/" << colliders.size() << std::endl;
+#endif
+            c->draw();
+        }
+    }
+
+#if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
+    idx = 1;
+#endif
+    for (auto& p : players)
+    {
+#if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
+        std::cerr << "Draw players " << idx++ << "/" << players.size() << std::endl;
+#endif
+        p->draw();
+    }
+
+#if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
+    idx = 1;
+#endif
+    for (auto& p : projectiles)
+    {
+#if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
+        std::cerr << "Draw projectiles " << idx++ << "/" << projectiles.size() << std::endl;
+#endif
+        p->draw();
+    }
+
+    label.draw();
+
+    SDL_RenderPresent(renderer);
+}
+
+void Game::clean()
+{
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
+    SDL_Quit();
+}

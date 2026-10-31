@@ -1,31 +1,40 @@
-#include <filesystem>
 #include "Game.h"
 
-Birch::Game *game = nullptr;
+Game *game = nullptr;
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    SDL_SetMainReady();
-
-    // calculate the absolute path to the executable so we can locate the fonts folder
-    std::filesystem::path arg0(argv[0]);
-    if (arg0.is_relative()) {
-        arg0 = std::filesystem::canonical(arg0);
-    }
-#if defined(_DEBUG) || defined(DEBUG)
-    std::cerr << "arg0: " << arg0 << std::endl;
-#endif
-
-    game = new Birch::Game(arg0);
-    if (!game->init("GameWindow", 800, 600, false))
+    if (argc > 1)
     {
-        std::cerr << "Failed to initialise: " << SDL_GetError() << std::endl;
+        // TODO: Handle cli params to show collision tiles?
+        for (int argIdx = 1; argIdx < argc; ++argIdx) {
+            std::cerr << "Arg " << argIdx << " '" << argv[argIdx] << "'" << std::endl;
+        }
     }
+    const int FPS = 60;
+    const int frameDelay = 1000 / FPS;
+
+    Uint32 frameStart;
+    int frameTime;
+
+    game = new Game();
+    game->init("Game Window", 800, 640, false);
+
     while (game->running())
     {
+
+        frameStart = SDL_GetTicks();
+
         game->handleEvents();
         game->update();
         game->render();
+
+        frameTime = SDL_GetTicks() - frameStart;
+
+        if (frameDelay > frameTime)
+        {
+            SDL_Delay(frameDelay - frameTime);
+        }
     }
 
     game->clean();

@@ -1,104 +1,48 @@
 # birch_engine
 
-Implementing the "BirchEngine" SDL2 project from [Let's Make Games - Youtube](https://www.youtube.com/playlist?list=PLhfAbcv9cehhkG7ZQK0nfIGJC_C-wSLrx).  The original code and design is solely the property of (Carl Birch)[www.youtube.com/@CarlBirch] with my changes as I follow along.
+Implementing the "BirchEngine" SDL2 project from [^1] [Let's Make Games - Youtube](https://www.youtube.com/playlist?list=PLhfAbcv9cehhkG7ZQK0nfIGJC_C-wSLrx).  The original code and design is solely the property of [Carl Birch](www.youtube.com/@CarlBirch) with my changes as I follow along.
+
+> **Introduction from the Original Author**<br/>
+> This 2D engine will be produced via an online series from my youtube channel: [Let's make games](www.youtube.com/carlbirch).
+You can watch and learn the skills required to do this here: https://goo.gl/VERhC5
 
 ## Libraries
 
-The CMake is currently based around visual studio and I have not yet added proper per configuration handling and library finding
+This project is written for [**SDL v2.32.10**](https://github.com/libsdl-org/SDL/releases?page=2#release-release-2.32.10)
+and [**CMake**](https://cmake.org/download/#latest) v3.21 or later
 
-TODO: Remove the generated README content and populate properly.
-
+1. You will need SDL2, [SDL_image](https://github.com/libsdl-org/SDL_image/releases#release-release-2.8.12), [SDL_ttf](https://github.com/libsdl-org/SDL_ttf/releases#release-release-2.24.0) and the [Open Source Liberation font](https://github.com/liberationfonts/liberation-fonts/releases/tag/2.1.5)
+1. API references can be found here: https://wiki.libsdl.org/
 
 ## Getting started
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+These instructions assume that you already have an approriate version of CMAKE
+and SDL installed.
+```shell
+cmake -B build ..
+cmake --build build
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/NaM_sdl2/birchengine/birch_engine.git
-git branch -M main
-git push -uf origin main
+To install (e.g. for deployment)
+```shell
+cmake --install build --install-prefix <absolute path to install dir>
 ```
 
-## Integrate with your tools
+>    _Note_: Install and library paths can be manky on Windows.  If needed the
+    SDL2 library and header paths can be hinted for use with the `find_package`
+    cmake command using either an environment variable `CMAKE_PREFIX_PATH` for
+    any cmake projects or specifying the `CMAKE_PREFIX_PATH` definition on the
+    command line using the `-DCMAKE_PREFIX_PATH=<path>` argument when initially
+    parsing the ==CMakeLists.txt== file.  Similarly the default installation
+    paths can be overridden using either the `CMAKE_INSTALL_PREFIX` environment
+    variable or specifying the argument on the command line when parsing the
+    CMakeLists.txt file using the `-D` argument.
 
-- [ ] [Set up project integrations](https://gitlab.com/NaM_sdl2/birchengine/birch_engine/-/settings/integrations)
+## Contribute
+_NOTE: Copied from the original author's README_
+If you would like to contribute any ideas for the original codebase then you can contact me (Carl Birch) at:
+[www.youtube.com/carlbirch] or
+[www.facebook.com/gamesfromscratch]
 
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-
----
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+[^1]: I have almost certainly used different formatting and coding style in a
+few places and I have also added the reset `R` and quit `ESC` key handling.
 
