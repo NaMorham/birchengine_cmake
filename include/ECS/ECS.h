@@ -12,12 +12,19 @@ class Entity;
 class Manager;
 
 using ComponentID = std::size_t;
+using EntityID = std::size_t;
 using Group = std::size_t;
 
 inline ComponentID getNewComponentTypeID()
 {
     static ComponentID lastID = 0u;
     return lastID++;
+}
+
+inline EntityID getNewEntityID()
+{
+    static EntityID lastEntityID{ 1u };
+    return lastEntityID++;
 }
 
 template <typename T> inline ComponentID getComponentTypeID() noexcept
@@ -52,13 +59,14 @@ private:
     Manager& manager;
     bool active = true;
     std::vector<std::unique_ptr<Component>> components;
+    EntityID id{ 0 };
 
     ComponentArray componentArray{};
     ComponentBitSet componentBitset{};
     GroupBitset groupBitset{};
 
 public:
-    Entity(Manager& mManager) : manager{ mManager } {}
+    Entity(Manager& mManager) : manager{ mManager }, id{ getNewEntityID() } {}
 
     void update()
     {
@@ -112,6 +120,8 @@ public:
         auto ptr(componentArray[getComponentTypeID<T>()]);
         return *static_cast<T*>(ptr);
     }
+
+    [[nodiscard]] inline EntityID getId() const { return id; }
 };
 
 class Manager
