@@ -23,6 +23,7 @@ AssetManager* Game::assets = new AssetManager(&manager);
 
 bool Game::isRunning = false;
 bool Game::showColliders{ false };
+bool Game::showBoundaries{ false };
 
 auto& player(manager.addEntity());
 auto& label(manager.addEntity());

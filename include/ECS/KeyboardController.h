@@ -42,6 +42,9 @@ public:
             case SDLK_c:
                 Game::showColliders = !Game::showColliders;
                 break;
+            case SDLK_b:
+                Game::showBoundaries = !Game::showBoundaries;
+                break;
             default:
                 break;
             }

@@ -31,6 +31,7 @@ public:
     static SDL_Event event;
     static bool isRunning;
     static bool showColliders;
+    static bool showBoundaries;
 
     static SDL_Rect camera;
     static AssetManager* assets;
