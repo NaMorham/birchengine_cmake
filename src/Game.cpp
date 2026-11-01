@@ -7,6 +7,10 @@
 #include "AssetManager.h"
 #include <sstream>
 
+#ifndef BIRCH_RESOURCE_DIR
+#error "BIRCH_RESOURCE_DIR must be defined by the build (see CMakeLists.txt)"
+#endif
+
 Map* map;
 Manager manager;
 
@@ -60,16 +64,16 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
         std::cout << "Error : SDL_TTF" << std::endl;
     }
 
-    assets->AddTexture("terrain", "Resources/assets/terrain_ss.png");
-    assets->AddTexture("player", "Resources/assets/player_anims.png");
-    assets->AddTexture("projectile", "Resources/assets/proj.png");
+    assets->AddTexture("terrain", resourcePath("assets/terrain_ss.png").c_str());
+    assets->AddTexture("player", resourcePath("assets/player_anims.png").c_str());
+    assets->AddTexture("projectile", resourcePath("assets/proj.png").c_str());
 
-    assets->AddFont("LiberationSans", "Resources/fonts/LiberationSans-Regular.ttf", 16);
+    assets->AddFont("LiberationSans", resourcePath("fonts/LiberationSans-Regular.ttf"), 16);
 
     map = new Map("terrain", 3, 32);
     //ecs implementation
 
-    map->LoadMap("Resources/assets/map.map", 25, 20);
+    map->LoadMap(resourcePath("assets/map.map"), 25, 20);
 
     (void)player.addComponent<TransformComponent>(800.0f, 640.0f, 32 , 32, 2);
     (void)player.addComponent<SpriteComponent>("player", true);
@@ -203,6 +207,30 @@ void Game::render()
     label.draw();
 
     SDL_RenderPresent(renderer);
+}
+
+std::string Game::resourcePath(const std::string& relativePath)
+{
+    // Resolved once. SDL_GetBasePath() returns the executable's directory
+    // (or Contents/Resources/ inside a macOS bundle), with a trailing separator.
+    static const std::string resourceRoot = []()
+    {
+        std::string root;
+        char* basePath = SDL_GetBasePath();
+        if (basePath)
+        {
+            root = basePath;
+            SDL_free(basePath);
+        }
+        else
+        {
+            // Fall back to the current working directory (the old behaviour).
+            std::cerr << "SDL_GetBasePath failed: " << SDL_GetError() << std::endl;
+        }
+        return root + BIRCH_RESOURCE_DIR;
+    }();
+
+    return resourceRoot + relativePath;
 }
 
 void Game::clean()

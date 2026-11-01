@@ -92,6 +92,14 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall>
 )
 
+# Runtime resource folder, relative to the executable. Used by the code
+# (Game::resourcePath), the build copy and the install, so they always agree.
+# A macOS bundle will set this to "" (resources live in Contents/Resources/).
+set(BIRCH_RESOURCE_DIR "Resources/")
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    BIRCH_RESOURCE_DIR="${BIRCH_RESOURCE_DIR}"
+)
+
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_BINARY_DIR}
     ${PROJECT_SOURCE_DIR}/include
@@ -116,33 +124,40 @@ add_custom_command(
         COMMAND_EXPAND_LISTS
     COMMENT "Copy SDL libs...\n"
 )
-add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/assets
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources/assets
-        COMMAND_EXPAND_LISTS
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/fonts
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources/fonts
-        COMMAND_EXPAND_LISTS
-    COMMENT "Copy assets and fonts...\n"
+# Runs on every build; copy_if_different only touches changed files.
+add_custom_target(copy_resources ALL
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/${BIRCH_RESOURCE_DIR}assets
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/${BIRCH_RESOURCE_DIR}fonts
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${ASSETS} $<TARGET_FILE_DIR:${PROJECT_NAME}>/${BIRCH_RESOURCE_DIR}assets
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${FONTS} $<TARGET_FILE_DIR:${PROJECT_NAME}>/${BIRCH_RESOURCE_DIR}fonts
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Copy runtime resources"
+    VERBATIM
 )
+add_dependencies(${PROJECT_NAME} copy_resources)
+
+# Portable layout: executable, runtime libraries and Resources/ side by side,
+# matching the build directory. Use -DBIRCH_INSTALL_DIR=. to install directly
+# into the prefix root (e.g. a dedicated folder on Windows).
+set(BIRCH_INSTALL_DIR bin CACHE STRING "Install directory (relative to prefix) for the executable and its resources")
 
 install(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION bin
+    RUNTIME DESTINATION ${BIRCH_INSTALL_DIR}
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib/archive
 )
 install(IMPORTED_RUNTIME_ARTIFACTS
-    SDL2::SDL2 DESTINATION bin
+    SDL2::SDL2 DESTINATION ${BIRCH_INSTALL_DIR}
 )
 install(IMPORTED_RUNTIME_ARTIFACTS
-    SDL2_image::SDL2_image DESTINATION bin
+    SDL2_image::SDL2_image DESTINATION ${BIRCH_INSTALL_DIR}
 )
 install(IMPORTED_RUNTIME_ARTIFACTS
-    SDL2_ttf::SDL2_ttf DESTINATION bin
+    SDL2_ttf::SDL2_ttf DESTINATION ${BIRCH_INSTALL_DIR}
 )
-install(FILES ${ASSETS} DESTINATION Resources/assets)
-install(FILES ${FONTS} DESTINATION Resources/fonts)
+install(FILES ${ASSETS} DESTINATION ${BIRCH_INSTALL_DIR}/${BIRCH_RESOURCE_DIR}assets)
+install(FILES ${FONTS} DESTINATION ${BIRCH_INSTALL_DIR}/${BIRCH_RESOURCE_DIR}fonts)
 

@@ -37,7 +37,7 @@ public:
 
         transform = &entity->getComponent<TransformComponent>();
 
-        tex = TextureManager::LoadTexture("Resources/assets/ColTex.png");
+        tex = TextureManager::LoadTexture(Game::resourcePath("assets/ColTex.png").c_str());
         srcR = { 0, 0, 32, 32 };
         destR = { collider.x, collider.y, collider.w, collider.h };
     }

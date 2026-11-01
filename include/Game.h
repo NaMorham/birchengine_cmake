@@ -3,6 +3,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include <iostream>
+#include <string>
 #include <vector>
 
 class AssetManager;
@@ -21,6 +22,10 @@ public:
     bool running() const { return isRunning; }
     void render();
     void clean();
+
+    // Full path to a resource, relative to the executable rather than the
+    // current working directory. MUST NOT be called before SDL_Init.
+    static std::string resourcePath(const std::string& relativePath);
 
     static SDL_Renderer *renderer;
     static SDL_Event event;
