@@ -64,7 +64,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
     assets->AddTexture("player", "Resources/assets/player_anims.png");
     assets->AddTexture("projectile", "Resources/assets/proj.png");
 
-    assets->AddFont("arial", "Resources/fonts/LiberationSans-Regular.ttf", 16);
+    assets->AddFont("LiberationSans", "Resources/fonts/LiberationSans-Regular.ttf", 16);
 
     map = new Map("terrain", 3, 32);
     //ecs implementation
@@ -79,7 +79,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
     SDL_Color white = { 255, 255, 255, 255 };
 
-    label.addComponent<UILabel>(10, 10, "Test String", "arial", white);
+    label.addComponent<UILabel>(10, 10, "Test String", "LiberationSans", white);
 
     assets->CreateProjectile(Vector2D(600, 600), Vector2D(2,0),200, 2, "projectile");
     assets->CreateProjectile(Vector2D(600, 620), Vector2D(2, 0), 200, 2, "projectile");
@@ -114,7 +114,7 @@ void Game::update()
 
     std::stringstream ss;
     ss << "Player position: " << playerPos;
-    label.getComponent<UILabel>().SetLabelText(ss.str(), "arial");
+    label.getComponent<UILabel>().SetLabelText(ss.str(), "LiberationSans");
 
     manager.refresh();
     manager.update();
