@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21...4.4)
 
-project(BirchEngine VERSION 1.0.0.1)
+project(BirchEngine VERSION 1.0.1.0)
 
 configure_file(BirchEngineVer.h.in include/BirchEngineVer.h)
 
