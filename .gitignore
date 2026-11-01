@@ -610,7 +610,7 @@ FodyWeavers.xsd
 
 # My ignores
 *.swp
-/tmp/**
+/tmp*/**
 *.bak
 *-bak
 *.tmp
@@ -624,7 +624,7 @@ id_rsa*
 id_ed*
 id_dsa*
 *_bak/*
-/bak/**
+/bak*/**
 /scripts/**
-/old/**
+/old*/**
 
