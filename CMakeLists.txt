@@ -52,11 +52,13 @@ set (ASSETS
     Resources/assets/ColTex.png
     Resources/assets/map.map
     Resources/assets/player_anims.png
+    Resources/assets/proj.png
     Resources/assets/terrain_ss.png
 )
 
 set (FONTS
     Resources/fonts/LiberationSans-Regular.ttf
+    Resources/fonts/LICENSE            # OFL: licence must accompany the fonts
 )
 
 set (EXTRAS
