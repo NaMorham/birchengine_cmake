@@ -32,7 +32,7 @@ public:
     {
         if (!entity->hasComponent<TransformComponent>())
         {
-            entity->addComponent<TransformComponent>();
+            (void)entity->addComponent<TransformComponent>();
         }
 
         transform = &entity->getComponent<TransformComponent>();

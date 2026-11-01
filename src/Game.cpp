@@ -71,15 +71,15 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
     map->LoadMap("Resources/assets/map.map", 25, 20);
 
-    player.addComponent<TransformComponent>(800.0f, 640.0f, 32 , 32, 2);
-    player.addComponent<SpriteComponent>("player", true);
-    player.addComponent<KeyboardController>();
-    player.addComponent<ColliderComponent>("player");
+    (void)player.addComponent<TransformComponent>(800.0f, 640.0f, 32 , 32, 2);
+    (void)player.addComponent<SpriteComponent>("player", true);
+    (void)player.addComponent<KeyboardController>();
+    (void)player.addComponent<ColliderComponent>("player");
     player.addGroup(groupPlayers);
 
     SDL_Color white = { 255, 255, 255, 255 };
 
-    label.addComponent<UILabel>(10, 10, "Test String", "LiberationSans", white);
+    (void)label.addComponent<UILabel>(10, 10, "Test String", "LiberationSans", white);
 
     assets->CreateProjectile(Vector2D(600, 600), Vector2D(2,0),200, 2, "projectile");
     assets->CreateProjectile(Vector2D(600, 620), Vector2D(2, 0), 200, 2, "projectile");

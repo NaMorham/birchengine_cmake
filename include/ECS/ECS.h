@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -68,28 +69,30 @@ public:
         for (auto& c : components) c->draw();
     }
 
-    bool isActive() const { return active; }
+    [[nodiscard]] inline bool isActive() const { return active; }
+
     void destroy() { active = false; }
 
-    bool hasGroup(Group mGroup)
+    [[nodiscard]] bool hasGroup(Group mGroup) const
     {
         return groupBitset[mGroup];
     }
 
     void addGroup(Group mGroup);
+
     void delGroup(Group mGroup)
     {
         groupBitset[mGroup] = false;
     }
 
     template <typename T>
-    bool hasComponent() const
+    [[nodiscard]] bool hasComponent() const
     {
         return componentBitset[getComponentTypeID<T>()];
     }
 
     template <typename T, typename... TArgs>
-    T& addComponent(TArgs&&... mArgs)
+    [[nodiscard]] T& addComponent(TArgs&&... mArgs)
     {
         T* c(new T(std::forward<TArgs>(mArgs)...));
         c->entity = this;
@@ -104,7 +107,7 @@ public:
     }
 
     template<typename T>
-    T& getComponent() const
+    [[nodiscard]] T& getComponent() const
     {
         auto ptr(componentArray[getComponentTypeID<T>()]);
         return *static_cast<T*>(ptr);
@@ -152,12 +155,12 @@ public:
         groupedEntities[mGroup].emplace_back(mEntity);
     }
 
-    std::vector<Entity*>& getGroup(Group mGroup)
+    [[nodiscard]] std::vector<Entity*>& getGroup(Group mGroup)
     {
         return groupedEntities[mGroup];
     }
 
-    Entity& addEntity()
+    [[nodiscard]] Entity& addEntity()
     {
         Entity *e = new Entity(*this);
         std::unique_ptr<Entity> uPtr { e };
