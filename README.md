@@ -44,5 +44,5 @@ If you would like to contribute any ideas for the original codebase then you can
 [www.facebook.com/gamesfromscratch]
 
 [^1]: I have almost certainly used different formatting and coding style in a
-few places and I have also added the reset `R` and quit `ESC` key handling.
+few places, changed to use an open source font and added quit `ESC` and `q` key handling.
 
