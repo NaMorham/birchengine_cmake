@@ -8,16 +8,11 @@
 class TileComponent : public Component
 {
 public:
-    SDL_Texture* texture{ nullptr };
+    SDL_Texture* texture{ nullptr };  // non-owning: owned by Game::assets
     SDL_Rect srcRect{ 0, 0, 0, 0 }, destRect{ 0, 0, 0, 0 };
     Vector2D position{ 0.0f, 0.0f };
 
     TileComponent() = default;
-
-    ~TileComponent()
-    {
-        SDL_DestroyTexture(texture);
-    }
 
     TileComponent(int srcX, int srcY, int xpos, int ypos, int tsize, int tscale, std::string id)
         : srcRect{ srcX, srcY }, destRect{ xpos, ypos }, 

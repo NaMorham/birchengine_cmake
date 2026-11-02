@@ -5,7 +5,24 @@ AssetManager::AssetManager(Manager* man) : manager(man)
 {}
 
 AssetManager::~AssetManager()
-{}
+{
+    // Map entries can be null (failed load, or a missed GetTexture/GetFont
+    // lookup inserting a default), so check before freeing.
+    for (auto& [id, texture] : textures)
+    {
+        if (texture)
+        {
+            SDL_DestroyTexture(texture);
+        }
+    }
+    for (auto& [id, font] : fonts)
+    {
+        if (font)
+        {
+            TTF_CloseFont(font);
+        }
+    }
+}
 
 void AssetManager::CreateProjectile(Vector2D pos, Vector2D vel, int range, int speed, std::string id)
 {

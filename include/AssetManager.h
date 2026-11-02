@@ -11,7 +11,15 @@ class AssetManager
 {
 public:
     AssetManager(Manager* man);
+    // Owns every texture and font it loads, and frees them on destruction.
+    // MUST be destroyed before the renderer and before TTF_Quit().
     ~AssetManager();
+
+    // Owns raw SDL resources, so copy and move are deleted (rule of five).
+    AssetManager(const AssetManager&) = delete;
+    AssetManager& operator=(const AssetManager&) = delete;
+    AssetManager(AssetManager&&) = delete;
+    AssetManager& operator=(AssetManager&&) = delete;
 
     //gameobjects
 

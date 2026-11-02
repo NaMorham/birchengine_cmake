@@ -244,7 +244,18 @@ std::string Game::resourcePath(const std::string& relativePath)
 
 void Game::clean()
 {
-    SDL_DestroyWindow(window);
+    // Order matters: textures and fonts before the renderer and TTF_Quit,
+    // and the renderer before its window.
+    // Entities still hold non-owning texture pointers after this; they MUST
+    // NOT be drawn again.
+    delete assets;
+    assets = nullptr;
+
     SDL_DestroyRenderer(renderer);
+    renderer = nullptr;
+    SDL_DestroyWindow(window);
+    window = nullptr;
+
+    TTF_Quit();
     SDL_Quit();
 }
