@@ -27,10 +27,14 @@ public:
 
     //texture management
     void AddTexture(std::string id, const char* path);
-    SDL_Texture* GetTexture(std::string id);
+    // Returns the texture registered as id, or nullptr (reported to stderr)
+    // if there is none. Never inserts. The pointer is non-owning.
+    [[nodiscard]] SDL_Texture* GetTexture(const std::string& id) const;
 
     void AddFont(std::string id, std::string path, int fontSize);
-    TTF_Font* GetFont(std::string id);
+    // Returns the font registered as id, or nullptr (reported to stderr)
+    // if there is none. Never inserts. The pointer is non-owning.
+    [[nodiscard]] TTF_Font* GetFont(const std::string& id) const;
 
 private:
     Manager* manager{ nullptr };
