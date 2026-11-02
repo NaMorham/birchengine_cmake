@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include "Components.h"
 #include "../TextureManager.h"
+#include "../AssetManager.h"
 
 class ColliderComponent : public Component
 {
@@ -10,7 +11,7 @@ public:
     SDL_Rect collider{ 0, 0, 0, 0 };
     std::string tag{};
 
-    SDL_Texture* tex{ nullptr };
+    SDL_Texture* tex{ nullptr };  // non-owning: owned by Game::assets
     SDL_Rect srcR{ 0, 0, 0, 0 }, destR{ 0, 0, 0, 0 };
 
     TransformComponent* transform{ nullptr };
@@ -37,7 +38,9 @@ public:
 
         transform = &entity->getComponent<TransformComponent>();
 
-        tex = TextureManager::LoadTexture(Game::resourcePath("assets/ColTex.png").c_str());
+        // Shared texture loaded once by Game::init(). MUST be registered
+        // before any collider is created (the map and the player).
+        tex = Game::assets->GetTexture("collider");
         srcR = { 0, 0, 32, 32 };
         destR = { collider.x, collider.y, collider.w, collider.h };
     }

@@ -79,6 +79,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
     assets->AddTexture("terrain", resourcePath("assets/terrain_ss.png").c_str());
     assets->AddTexture("player", resourcePath("assets/player_anims.png").c_str());
     assets->AddTexture("projectile", resourcePath("assets/proj.png").c_str());
+    assets->AddTexture("collider", resourcePath("assets/ColTex.png").c_str());
 
     assets->AddFont("LiberationSans", resourcePath("fonts/LiberationSans-Regular.ttf"), 16);
 
