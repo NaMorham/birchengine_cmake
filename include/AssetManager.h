@@ -26,6 +26,6 @@ public:
 
 private:
     Manager* manager{ nullptr };
-    std::map<std::string, SDL_Texture*> textures;
-    std::map<std::string, TTF_Font*> fonts;
+    std::map<std::string, SDL_Texture*> textures{};
+    std::map<std::string, TTF_Font*> fonts{};
 };

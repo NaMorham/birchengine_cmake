@@ -28,12 +28,12 @@ public:
         labelTexture = SDL_CreateTextureFromSurface(Game::renderer, surf);
         SDL_FreeSurface(surf);
 
-        SDL_QueryTexture(labelTexture, nullptr, nullptr, &position.w, &position.h);
+        (void)SDL_QueryTexture(labelTexture, nullptr, nullptr, &position.w, &position.h);
     }
 
-    void draw() override
+    void draw() const override
     {
-        SDL_RenderCopy(Game::renderer, labelTexture, nullptr, &position);
+        (void)SDL_RenderCopy(Game::renderer, labelTexture, nullptr, &position);
     }
 
 private:

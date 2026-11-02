@@ -15,12 +15,16 @@ using ComponentID = std::size_t;
 using EntityID = std::size_t;
 using Group = std::size_t;
 
+// Next component type ID. Owned by the ECS; incremented once per component
+// type. NOT thread-safe: component types MUST be first used on the main thread.
 inline ComponentID getNewComponentTypeID()
 {
-    static ComponentID lastID = 0u;
+    static ComponentID lastID{ 0u };
     return lastID++;
 }
 
+// Next entity ID (0 means unassigned). Owned by the ECS; incremented once per
+// entity. NOT thread-safe: entities MUST be created on the main thread.
 inline EntityID getNewEntityID()
 {
     static EntityID lastEntityID{ 1u };
@@ -30,12 +34,14 @@ inline EntityID getNewEntityID()
 template <typename T> inline ComponentID getComponentTypeID() noexcept
 {
     static_assert (std::is_base_of<Component, T>::value, "");
-    static ComponentID typeID = getNewComponentTypeID();
+    // Initialised once per type (thread-safe in C++11 and later), but the
+    // ID comes from getNewComponentTypeID(), which is not thread-safe.
+    static ComponentID typeID{ getNewComponentTypeID() };
     return typeID;
 }
 
-constexpr std::size_t maxComponents = 32;
-constexpr std::size_t maxGroups = 32;
+constexpr std::size_t maxComponents{ 32 };
+constexpr std::size_t maxGroups{ 32 };
 
 using ComponentBitSet = std::bitset<maxComponents>;
 using GroupBitset = std::bitset<maxGroups>;
@@ -47,17 +53,25 @@ class Component
 public:
     Entity* entity{ nullptr };  // pointer to the "owning" entity
 
+    // Polymorphic base, owned through std::unique_ptr by its Entity.
+    // Copy and move are deleted to prevent slicing (rule of five).
+    Component() = default;
+    Component(const Component&) = delete;
+    Component& operator=(const Component&) = delete;
+    Component(Component&&) = delete;
+    Component& operator=(Component&&) = delete;
+    virtual ~Component() = default;
+
     virtual void init() {}
     virtual void update() {}
-    virtual void draw() {}
-    virtual ~Component() {}
+    virtual void draw() const {}
 };
 
 class Entity
 {
 private:
     Manager& manager;
-    bool active = true;
+    bool active{ true };
     std::vector<std::unique_ptr<Component>> components;
     EntityID id{ 0 };
 
@@ -72,9 +86,12 @@ public:
     {
         for (auto& c : components) c->update();
     }
-    void draw()
+
+    void draw() const
     {
-        for (auto& c : components) c->draw();
+        for (auto& c : components) {
+            c->draw();
+        }
     }
 
     [[nodiscard]] inline bool isActive() const { return active; }
@@ -127,17 +144,26 @@ public:
 class Manager
 {
 private:
-    std::vector<std::unique_ptr<Entity>> entities;
-    std::array<std::vector<Entity*>, maxGroups> groupedEntities;
+    std::vector<std::unique_ptr<Entity>> entities{};
+    std::array<std::vector<Entity*>, maxGroups> groupedEntities{};
+
 public:
     void update()
     {
-        for (auto& e : entities) e->update();
+        for (auto& e : entities)
+        {
+            e->update();
+        }
     }
-    void draw()
+
+    void draw() const
     {
-        for (auto& e : entities) e->draw();
+        for (auto& e : entities)
+        {
+            e->draw();
+        }
     }
+
     void refresh()
     {
         for (auto i(0u); i < maxGroups; i++)

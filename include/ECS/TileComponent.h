@@ -34,7 +34,7 @@ public:
         destRect.y = static_cast<int>(position.y - Game::camera.y);
     }
 
-    void draw() override
+    void draw() const override
     {
         TextureManager::Draw(texture, srcRect, destRect, SDL_FLIP_NONE);
     }

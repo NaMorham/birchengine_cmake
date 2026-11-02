@@ -27,7 +27,7 @@ public:
     // current working directory. MUST NOT be called before SDL_Init.
     static std::string resourcePath(const std::string& relativePath);
 
-    static SDL_Renderer *renderer;
+    static SDL_Renderer* renderer;
     static SDL_Event event;
     static bool isRunning;
     static bool showColliders;

@@ -7,13 +7,13 @@
 class ColliderComponent : public Component
 {
 public:
-    SDL_Rect collider;
-    std::string tag;
+    SDL_Rect collider{ 0, 0, 0, 0 };
+    std::string tag{};
 
-    SDL_Texture* tex;
-    SDL_Rect srcR, destR;
+    SDL_Texture* tex{ nullptr };
+    SDL_Rect srcR{ 0, 0, 0, 0 }, destR{ 0, 0, 0, 0 };
 
-    TransformComponent* transform;
+    TransformComponent* transform{ nullptr };
 
     ColliderComponent(std::string t)
     {
@@ -56,7 +56,7 @@ public:
         destR.y = collider.y - Game::camera.y;
     }
 
-    void draw() override
+    void draw() const override
     {
         TextureManager::Draw(tex, srcR, destR, SDL_FLIP_NONE);
     }

@@ -80,7 +80,7 @@ public:
         destRect.h = transform->height * transform->scale;
     }
 
-    void draw() override
+    void draw() const override
     {
         TextureManager::Draw(texture, srcRect, destRect, spriteFlip);
     }
