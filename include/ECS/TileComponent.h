@@ -38,4 +38,12 @@ public:
     {
         TextureManager::Draw(texture, srcRect, destRect, SDL_FLIP_NONE);
     }
+
+    void drawBounds() const override
+    {
+        // Results discarded: a failed debug-overlay draw is non-fatal, and
+        // logging it here would repeat every frame for every entity.
+        (void)SDL_SetRenderDrawColor(Game::renderer, 0x00, 0x00, 0x00, 0x7f);
+        (void)SDL_RenderDrawRect(Game::renderer, &destRect);
+    }
 };

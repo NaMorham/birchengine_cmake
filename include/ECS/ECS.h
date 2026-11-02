@@ -65,6 +65,9 @@ public:
     virtual void init() {}
     virtual void update() {}
     virtual void draw() const {}
+    // Debug overlay. MAY change the renderer's draw colour and does not
+    // restore it; code that needs a specific colour MUST set it first.
+    virtual void drawBounds() const {}
 };
 
 class Entity
@@ -91,6 +94,12 @@ public:
     {
         for (auto& c : components) {
             c->draw();
+        }
+    }
+    void drawBounds() const
+    {
+        for (auto& c : components) {
+            c->drawBounds();
         }
     }
 

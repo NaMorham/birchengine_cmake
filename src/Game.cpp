@@ -160,13 +160,19 @@ void Game::render()
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
     size_t idx{ 1 };
 #endif
-    SDL_RenderClear(renderer);
+    // Draw colour is shared renderer state and is changed by debug overlays
+    // (drawBounds), so set the clear colour explicitly every frame.
+    // Results discarded: a failed clear only affects this frame, and logging
+    // it here would repeat every frame.
+    (void)SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    (void)SDL_RenderClear(renderer);
     for (auto& t : tiles)
     {
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
         std::cerr << "Draw tile " << idx++ << "/" << tiles.size() << std::endl;
 #endif
         t->draw();
+        if (showBoundaries) t->drawBounds();
     }
 
     if (showColliders)
@@ -192,6 +198,7 @@ void Game::render()
         std::cerr << "Draw players " << idx++ << "/" << players.size() << std::endl;
 #endif
         p->draw();
+        if (showBoundaries) p->drawBounds();
     }
 
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
@@ -203,6 +210,7 @@ void Game::render()
         std::cerr << "Draw projectiles " << idx++ << "/" << projectiles.size() << std::endl;
 #endif
         p->draw();
+        if (showBoundaries) p->drawBounds();
     }
 
     label.draw();
