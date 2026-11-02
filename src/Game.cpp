@@ -55,6 +55,17 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
         if (renderer)
         {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+            // Alpha blending for primitive draws (lines, rects), so the
+            // semi-transparent debug overlays (drawBounds) blend as intended.
+            // Set once here: nothing else changes it. It does not affect
+            // SDL_RenderClear or texture copies, which use each texture's
+            // own blend mode.
+            if (SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND) != 0)
+            {
+                // Non-fatal: overlays draw opaque instead.
+                std::cerr << "SDL_SetRenderDrawBlendMode failed: " << SDL_GetError() << std::endl;
+            }
         }
 
         isRunning = true;

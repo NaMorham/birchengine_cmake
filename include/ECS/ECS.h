@@ -67,6 +67,8 @@ public:
     virtual void draw() const {}
     // Debug overlay. MAY change the renderer's draw colour and does not
     // restore it; code that needs a specific colour MUST set it first.
+    // Alpha in the draw colour is honoured: Game::init() sets the draw
+    // blend mode to SDL_BLENDMODE_BLEND.
     virtual void drawBounds() const {}
 };
 
