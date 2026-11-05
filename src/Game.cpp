@@ -5,6 +5,8 @@
 #include "Vector2D.h"
 #include "Collision.h"
 #include "AssetManager.h"
+#include "BirchEngineVer.h"
+#include "SDL_ttf.h"
 #include <sstream>
 
 #ifndef BIRCH_RESOURCE_DIR
@@ -28,6 +30,73 @@ bool Game::showBoundaries{ false };
 auto& player(manager.addEntity());
 auto& label(manager.addEntity());
 
+// The headers compiled here MUST be the ones CMake found and checked against
+// the pins (cmake/BirchPins.cmake). A second install earlier on the include
+// path can shadow them, and the build would then link one version while
+// compiling against another. Fail the compile rather than find out at run
+// time.
+#if !defined(BIRCH_FOUND_SDL2_MAJOR) || !defined(BIRCH_FOUND_SDL2_IMAGE_MAJOR) || !defined(BIRCH_FOUND_SDL2_TTF_MAJOR)
+#error "BIRCH_FOUND_* versions must be defined by the build (see cmake/BirchPins.cmake)"
+#endif
+static_assert(SDL_MAJOR_VERSION == BIRCH_FOUND_SDL2_MAJOR
+              && SDL_MINOR_VERSION == BIRCH_FOUND_SDL2_MINOR
+              && SDL_PATCHLEVEL == BIRCH_FOUND_SDL2_PATCH,
+              "SDL.h is not the version CMake found: another SDL2 install is shadowing it on the include path");
+static_assert(SDL_IMAGE_MAJOR_VERSION == BIRCH_FOUND_SDL2_IMAGE_MAJOR
+              && SDL_IMAGE_MINOR_VERSION == BIRCH_FOUND_SDL2_IMAGE_MINOR
+              && SDL_IMAGE_PATCHLEVEL == BIRCH_FOUND_SDL2_IMAGE_PATCH,
+              "SDL_image.h is not the version CMake found: another SDL2_image install is shadowing it on the include path");
+static_assert(SDL_TTF_MAJOR_VERSION == BIRCH_FOUND_SDL2_TTF_MAJOR
+              && SDL_TTF_MINOR_VERSION == BIRCH_FOUND_SDL2_TTF_MINOR
+              && SDL_TTF_PATCHLEVEL == BIRCH_FOUND_SDL2_TTF_PATCH,
+              "SDL_ttf.h is not the version CMake found: another SDL2_ttf install is shadowing it on the include path");
+
+namespace
+{
+    // Log one library's compiled (header) and linked (runtime) versions.
+    // A difference means the shared library loaded at run time is not the
+    // one the build was checked against (SC-41/SC-42), e.g. a stale DLL next
+    // to the executable or a distro update. Logged, not fatal: SDL keeps ABI
+    // compatibility within 2.x, but the build record no longer describes
+    // what is running.
+    void logLibraryVersion(const char* name, const SDL_version& compiled, const SDL_version* linked)
+    {
+        std::cerr << name << ": compiled "
+                  << static_cast<int>(compiled.major) << "." << static_cast<int>(compiled.minor) << "."
+                  << static_cast<int>(compiled.patch);
+        if (linked == nullptr)
+        {
+            std::cerr << ", linked version unavailable" << std::endl;
+            return;
+        }
+        std::cerr << ", linked "
+                  << static_cast<int>(linked->major) << "." << static_cast<int>(linked->minor) << "."
+                  << static_cast<int>(linked->patch);
+        if ((linked->major != compiled.major) || (linked->minor != compiled.minor) || (linked->patch != compiled.patch))
+        {
+            std::cerr << "  ** MISMATCH: runtime library differs from build (see build-info.txt)";
+        }
+        std::cerr << std::endl;
+    }
+
+    void logLibraryVersions()
+    {
+        std::cerr << "BirchEngine " << BirchEngine_Version << std::endl;
+
+        SDL_version compiled{};
+        SDL_version linked{};
+        SDL_VERSION(&compiled);
+        SDL_GetVersion(&linked);
+        logLibraryVersion("SDL2", compiled, &linked);
+
+        SDL_IMAGE_VERSION(&compiled);
+        logLibraryVersion("SDL2_image", compiled, IMG_Linked_Version());
+
+        SDL_TTF_VERSION(&compiled);
+        logLibraryVersion("SDL2_ttf", compiled, TTF_Linked_Version());
+    }
+}
+
 Game::Game() : window{ nullptr }
 {}
 
@@ -47,6 +116,10 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 #if defined(_WIN32) || defined(_WIN64)
     SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d12");
 #endif
+
+    // Before SDL_Init: the version queries need no initialisation, and the
+    // record is wanted even when initialisation fails.
+    logLibraryVersions();
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER) == 0)
     {
