@@ -114,22 +114,28 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf)
 
-add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:SDL2::SDL2>
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>
-        COMMAND_EXPAND_LISTS
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:SDL2_image::SDL2_image>
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>
-        COMMAND_EXPAND_LISTS
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:SDL2_ttf::SDL2_ttf>
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>
-        COMMAND_EXPAND_LISTS
-    COMMENT "Copy SDL libs...\n"
-)
+# Windows: the DLLs MUST sit next to the .exe to be found, so copy them into
+# the build tree. Not done on Linux: the build tree uses its build RPATH to
+# reach the libraries where they are installed, and a copy would not be
+# loaded anyway (see the install section).
+if(WIN32)
+    add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:SDL2::SDL2>
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+            COMMAND_EXPAND_LISTS
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:SDL2_image::SDL2_image>
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+            COMMAND_EXPAND_LISTS
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:SDL2_ttf::SDL2_ttf>
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+            COMMAND_EXPAND_LISTS
+        COMMENT "Copy SDL libs...\n"
+    )
+endif()
 # Runs on every build; copy_if_different only touches changed files.
 add_custom_target(copy_resources ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory
@@ -154,20 +160,50 @@ birch_write_build_info(${PROJECT_NAME})
 # into the prefix root (e.g. a dedicated folder on Windows).
 set(BIRCH_INSTALL_DIR bin CACHE STRING "Install directory (relative to prefix) for the executable and its resources")
 
-install(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION ${BIRCH_INSTALL_DIR}
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib/archive
-)
-install(IMPORTED_RUNTIME_ARTIFACTS
-    SDL2::SDL2 DESTINATION ${BIRCH_INSTALL_DIR}
-)
-install(IMPORTED_RUNTIME_ARTIFACTS
-    SDL2_image::SDL2_image DESTINATION ${BIRCH_INSTALL_DIR}
-)
-install(IMPORTED_RUNTIME_ARTIFACTS
-    SDL2_ttf::SDL2_ttf DESTINATION ${BIRCH_INSTALL_DIR}
-)
+if(WIN32)
+    install(TARGETS ${PROJECT_NAME}
+        RUNTIME DESTINATION ${BIRCH_INSTALL_DIR}
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib/archive
+    )
+    # On Windows the imported location is the DLL itself.
+    install(IMPORTED_RUNTIME_ARTIFACTS
+        SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf
+        DESTINATION ${BIRCH_INSTALL_DIR}
+    )
+elseif(UNIX AND NOT APPLE)
+    # Linux: bundle the SDL libraries by the names the executable actually
+    # loads (its NEEDED entries, e.g. libSDL2-2.0.so.0), resolved to real
+    # files. IMPORTED_RUNTIME_ARTIFACTS is not used: distro SDL configs point
+    # IMPORTED_LOCATION at the libSDL2.so development symlink with no
+    # SONAME, so it installed a dangling symlink under a name the executable
+    # never loads.
+    # Only SDL is bundled; its own dependencies (libpng, freetype, ...) still
+    # come from the system.
+    install(TARGETS ${PROJECT_NAME}
+        RUNTIME_DEPENDENCY_SET birch_sdl_runtime
+        RUNTIME DESTINATION ${BIRCH_INSTALL_DIR}
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib/archive
+    )
+    install(RUNTIME_DEPENDENCY_SET birch_sdl_runtime
+        PRE_INCLUDE_REGEXES "^libSDL2"
+        PRE_EXCLUDE_REGEXES ".*"
+        DIRECTORIES
+            $<TARGET_FILE_DIR:SDL2::SDL2>
+            $<TARGET_FILE_DIR:SDL2_image::SDL2_image>
+            $<TARGET_FILE_DIR:SDL2_ttf::SDL2_ttf>
+        LIBRARY DESTINATION ${BIRCH_INSTALL_DIR}
+    )
+    # The installed executable MUST load the bundled copies next to it, not
+    # whatever the system has. The build tree keeps its build RPATH.
+    set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
+else()
+    # macOS: an .app bundle is planned and needs its own layout
+    # (Contents/Frameworks, @executable_path). Not implemented yet.
+    install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${BIRCH_INSTALL_DIR})
+    message(WARNING "Install does not bundle SDL on this platform yet (macOS bundle work pending)")
+endif()
 install(FILES $<TARGET_FILE_DIR:${PROJECT_NAME}>/build-info.txt DESTINATION ${BIRCH_INSTALL_DIR})
 install(FILES ${ASSETS} DESTINATION ${BIRCH_INSTALL_DIR}/${BIRCH_RESOURCE_DIR}assets)
 install(FILES ${FONTS} DESTINATION ${BIRCH_INSTALL_DIR}/${BIRCH_RESOURCE_DIR}fonts)
