@@ -31,8 +31,7 @@ public:
 
     void init() override
     {
-        if (!entity->hasComponent<TransformComponent>())
-        {
+        if (!entity->hasComponent<TransformComponent>()) {
             (void)entity->addComponent<TransformComponent>();
         }
 
@@ -47,8 +46,7 @@ public:
 
     void update() override
     {
-        if (tag != "terrain")
-        {
+        if (tag != "terrain") {
             collider.x = static_cast<int>(transform->position.x);
             collider.y = static_cast<int>(transform->position.y);
             collider.w = transform->width * transform->scale;

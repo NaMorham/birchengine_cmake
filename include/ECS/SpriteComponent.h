@@ -67,8 +67,7 @@ public:
 
     void update() override
     {
-        if (animated)
-        {
+        if (animated) {
             srcRect.x = srcRect.w * static_cast<int>((SDL_GetTicks() / speed) % frames);
         }
 

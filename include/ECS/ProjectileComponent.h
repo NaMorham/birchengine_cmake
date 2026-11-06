@@ -24,16 +24,14 @@ public:
     {
         distance += speed;
 
-        if (distance > range)
-        {
+        if (distance > range) {
             std::cout << "Out of Range" << std::endl;
             entity->destroy();
         }
         else if (transform->position.x > Game::camera.x + Game::camera.w ||
                 transform->position.x < Game::camera.x ||
                 transform->position.y > Game::camera.y + Game::camera.h ||
-                transform->position.y < Game::camera.y)
-        {
+                transform->position.y < Game::camera.y) {
             std::cout << "Out of bounds!" << std::endl;
             entity->destroy();
         }

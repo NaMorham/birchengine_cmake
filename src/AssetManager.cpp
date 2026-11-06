@@ -9,17 +9,13 @@ AssetManager::~AssetManager()
 {
     // Map entries can be null (a failed load is still registered), so check
     // before freeing.
-    for (auto& [id, texture] : textures)
-    {
-        if (texture)
-        {
+    for (auto& [id, texture] : textures) {
+        if (texture) {
             SDL_DestroyTexture(texture);
         }
     }
-    for (auto& [id, font] : fonts)
-    {
-        if (font)
-        {
+    for (auto& [id, font] : fonts) {
+        if (font) {
             TTF_CloseFont(font);
         }
     }
@@ -46,8 +42,7 @@ SDL_Texture* AssetManager::GetTexture(const std::string& id) const
     // (SC-16). The miss is reported here; the caller gets nullptr, which
     // SDL rejects as a draw source (nothing is drawn).
     const auto it = textures.find(id);
-    if (it == textures.end())
-    {
+    if (it == textures.end()) {
         std::cerr << "AssetManager: no texture registered as '" << id << "'" << std::endl;
         return nullptr;
     }
@@ -63,8 +58,7 @@ TTF_Font* AssetManager::GetFont(const std::string& id) const
 {
     // find(), not operator[]: see GetTexture().
     const auto it = fonts.find(id);
-    if (it == fonts.end())
-    {
+    if (it == fonts.end()) {
         std::cerr << "AssetManager: no font registered as '" << id << "'" << std::endl;
         return nullptr;
     }

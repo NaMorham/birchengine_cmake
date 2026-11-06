@@ -21,17 +21,14 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
     std::fstream mapFile;
     mapFile.open(path);
 
-    if (!mapFile.is_open())
-    {
+    if (!mapFile.is_open()) {
         std::cerr << "Failed to open map file: '" << path.c_str() << "'" << std::endl;
     }
 
     int srcX, srcY;
 
-    for (int y = 0; y < sizeY; y++)
-    {
-        for (int x = 0; x < sizeX; x++)
-        {
+    for (int y = 0; y < sizeY; y++) {
+        for (int x = 0; x < sizeX; x++) {
             mapFile.get(c);
             srcY = atoi(&c) * tileSize;
             mapFile.get(c);
@@ -43,13 +40,10 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 
     mapFile.ignore();
 
-    for (int y = 0; y < sizeY; y++)
-    {
-        for (int x = 0; x < sizeX; x++)
-        {
+    for (int y = 0; y < sizeY; y++) {
+        for (int x = 0; x < sizeX; x++) {
             mapFile.get(c);
-            if (c == '1')
-            {
+            if (c == '1') {
                 auto& tcol(manager.addEntity());
                 (void)tcol.addComponent<ColliderComponent>("terrain", x * scaledSize, y * scaledSize, scaledSize);
                 tcol.addGroup(Game::groupColliders);

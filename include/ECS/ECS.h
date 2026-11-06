@@ -161,24 +161,21 @@ private:
 public:
     void update()
     {
-        for (auto& e : entities)
-        {
+        for (auto& e : entities) {
             e->update();
         }
     }
 
     void draw() const
     {
-        for (auto& e : entities)
-        {
+        for (auto& e : entities) {
             e->draw();
         }
     }
 
     void refresh()
     {
-        for (auto i(0u); i < maxGroups; i++)
-        {
+        for (auto i(0u); i < maxGroups; i++) {
             auto& v(groupedEntities[i]);
             v.erase(
                 std::remove_if(std::begin(v), std::end(v),

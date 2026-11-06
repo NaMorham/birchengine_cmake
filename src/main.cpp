@@ -4,8 +4,7 @@ Game *game = nullptr;
 
 int main(int argc, char* argv[])
 {
-    if (argc > 1)
-    {
+    if (argc > 1) {
         // TODO: Handle cli params to show collision tiles?
         for (int argIdx = 1; argIdx < argc; ++argIdx) {
             std::cerr << "Arg " << argIdx << " '" << argv[argIdx] << "'" << std::endl;
@@ -20,8 +19,7 @@ int main(int argc, char* argv[])
     game = new Game();
     game->init("Game Window", 800, 640, false);
 
-    while (game->running())
-    {
+    while (game->running()) {
 
         frameStart = SDL_GetTicks();
 
@@ -31,8 +29,7 @@ int main(int argc, char* argv[])
 
         frameTime = SDL_GetTicks() - frameStart;
 
-        if (frameDelay > frameTime)
-        {
+        if (frameDelay > frameTime) {
             SDL_Delay(frameDelay - frameTime);
         }
     }

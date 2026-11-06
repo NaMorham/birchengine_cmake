@@ -64,16 +64,16 @@ namespace
         std::cerr << name << ": compiled "
                   << static_cast<int>(compiled.major) << "." << static_cast<int>(compiled.minor) << "."
                   << static_cast<int>(compiled.patch);
-        if (linked == nullptr)
-        {
+        if (linked == nullptr) {
             std::cerr << ", linked version unavailable" << std::endl;
             return;
         }
         std::cerr << ", linked "
                   << static_cast<int>(linked->major) << "." << static_cast<int>(linked->minor) << "."
                   << static_cast<int>(linked->patch);
-        if ((linked->major != compiled.major) || (linked->minor != compiled.minor) || (linked->patch != compiled.patch))
-        {
+        if ((linked->major != compiled.major) ||
+            (linked->minor != compiled.minor) ||
+            (linked->patch != compiled.patch)) {
             std::cerr << "  ** MISMATCH: runtime library differs from build (see build-info.txt)";
         }
         std::cerr << std::endl;
@@ -107,8 +107,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 {
     int flags = 0;
 
-    if (fullscreen)
-    {
+    if (fullscreen) {
         flags = SDL_WINDOW_FULLSCREEN;
     }
 
@@ -121,12 +120,10 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
     // record is wanted even when initialisation fails.
     logLibraryVersions();
 
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER) == 0)
-    {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER) == 0) {
         window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
         renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-        if (renderer)
-        {
+        if (renderer) {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
             // Alpha blending for primitive draws (lines, rects), so the
@@ -134,8 +131,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
             // Set once here: nothing else changes it. It does not affect
             // SDL_RenderClear or texture copies, which use each texture's
             // own blend mode.
-            if (SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND) != 0)
-            {
+            if (SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND) != 0) {
                 // Non-fatal: overlays draw opaque instead.
                 std::cerr << "SDL_SetRenderDrawBlendMode failed: " << SDL_GetError() << std::endl;
             }
@@ -144,8 +140,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
         isRunning = true;
     }
 
-    if (TTF_Init() == -1)
-    {
+    if (TTF_Init() == -1) {
         std::cout << "Error : SDL_TTF" << std::endl;
     }
 
@@ -209,19 +204,15 @@ void Game::update()
     manager.refresh();
     manager.update();
 
-    for (auto& c : colliders)
-    {
+    for (auto& c : colliders) {
         SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
-        if (Collision::AABB(cCol, playerCol))
-        {
+        if (Collision::AABB(cCol, playerCol)) {
             player.getComponent<TransformComponent>().position = playerPos;
         }
     }
 
-    for (auto& p : projectiles)
-    {
-        if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
-        {
+    for (auto& p : projectiles) {
+        if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider)) {
             std::cout << "Hit player!" << std::endl;
             p->destroy();
         }
@@ -230,14 +221,18 @@ void Game::update()
     camera.x = static_cast<int>(player.getComponent<TransformComponent>().position.x - 400.0f);
     camera.y = static_cast<int>(player.getComponent<TransformComponent>().position.y - 320.0f);
 
-    if (camera.x < 0)
+    if (camera.x < 0) {
         camera.x = 0;
-    if (camera.y < 0)
+    }
+    if (camera.y < 0) {
         camera.y = 0;
-    if (camera.x > camera.w)
+    }
+    if (camera.x > camera.w) {
         camera.x = camera.w;
-    if (camera.y > camera.h)
+    }
+    if (camera.y > camera.h) {
         camera.y = camera.h;
+    }
 }
 
 void Game::render()
@@ -251,8 +246,7 @@ void Game::render()
     // it here would repeat every frame.
     (void)SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     (void)SDL_RenderClear(renderer);
-    for (auto& t : tiles)
-    {
+    for (auto& t : tiles) {
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
         std::cerr << "Draw tile " << idx++ << "/" << tiles.size() << std::endl;
 #endif
@@ -260,13 +254,11 @@ void Game::render()
         if (showBoundaries) t->drawBounds();
     }
 
-    if (showColliders)
-    {
+    if (showColliders) {
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
         idx=1;
 #endif
-        for (auto& c : colliders)
-        {
+        for (auto& c : colliders) {
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
             std::cerr << "Draw collider " << idx++ << "/" << colliders.size() << std::endl;
 #endif
@@ -277,8 +269,7 @@ void Game::render()
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
     idx = 1;
 #endif
-    for (auto& p : players)
-    {
+    for (auto& p : players) {
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
         std::cerr << "Draw players " << idx++ << "/" << players.size() << std::endl;
 #endif
@@ -289,8 +280,7 @@ void Game::render()
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
     idx = 1;
 #endif
-    for (auto& p : projectiles)
-    {
+    for (auto& p : projectiles) {
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
         std::cerr << "Draw projectiles " << idx++ << "/" << projectiles.size() << std::endl;
 #endif
@@ -311,13 +301,11 @@ std::string Game::resourcePath(const std::string& relativePath)
     {
         std::string root;
         char* basePath = SDL_GetBasePath();
-        if (basePath)
-        {
+        if (basePath) {
             root = basePath;
             SDL_free(basePath);
         }
-        else
-        {
+        else {
             // Fall back to the current working directory (the old behaviour).
             std::cerr << "SDL_GetBasePath failed: " << SDL_GetError() << std::endl;
         }
