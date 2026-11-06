@@ -3,7 +3,8 @@
 #include <iostream>
 
 AssetManager::AssetManager(Manager* man) : manager(man)
-{}
+{
+}
 
 AssetManager::~AssetManager()
 {

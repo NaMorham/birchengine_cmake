@@ -8,12 +8,11 @@
 #include <string>
 #include "../AssetManager.h"
 
-class SpriteComponent : public Component
-{
+class SpriteComponent : public Component {
 private:
-    TransformComponent *transform{ nullptr };
-    SDL_Texture *texture{ nullptr };
-    SDL_Rect srcRect{ 0, 0, 0, 0 }, destRect{0, 0, 0, 0 };
+    TransformComponent* transform{ nullptr };
+    SDL_Texture* texture{ nullptr };
+    SDL_Rect srcRect{ 0, 0, 0, 0 }, destRect{ 0, 0, 0, 0 };
 
     bool animated{ false };
     int frames{ 1 };
@@ -26,10 +25,7 @@ public:
     SDL_RendererFlip spriteFlip{ SDL_FLIP_NONE };
 
     SpriteComponent() = default;
-    SpriteComponent(std::string id)
-    {
-        setTex(id);
-    }
+    SpriteComponent(std::string id) { setTex(id); }
 
     SpriteComponent(std::string id, bool isAnimated)
     {
@@ -46,14 +42,9 @@ public:
         setTex(id);
     }
 
-    ~SpriteComponent()
-    {
-    }
+    ~SpriteComponent() {}
 
-    void setTex(std::string id)
-    {
-        texture = Game::assets->GetTexture(id);
-    }
+    void setTex(std::string id) { texture = Game::assets->GetTexture(id); }
 
     void init() override
     {
@@ -79,10 +70,7 @@ public:
         destRect.h = transform->height * transform->scale;
     }
 
-    void draw() const override
-    {
-        TextureManager::Draw(texture, srcRect, destRect, spriteFlip);
-    }
+    void draw() const override { TextureManager::Draw(texture, srcRect, destRect, spriteFlip); }
 
     void drawBounds() const override
     {
@@ -101,5 +89,4 @@ public:
         animIndex = anim.index;
         speed = anim.speed;
     }
-
 };

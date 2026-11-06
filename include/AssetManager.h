@@ -7,8 +7,7 @@
 #include "ECS/ECS.h"
 #include "SDL_ttf.h"
 
-class AssetManager
-{
+class AssetManager {
 public:
     AssetManager(Manager* man);
     // Owns every texture and font it loads, and frees them on destruction.
@@ -21,11 +20,11 @@ public:
     AssetManager(AssetManager&&) = delete;
     AssetManager& operator=(AssetManager&&) = delete;
 
-    //gameobjects
+    // gameobjects
 
     void CreateProjectile(Vector2D pos, Vector2D vel, int range, int speed, std::string id);
 
-    //texture management
+    // texture management
     void AddTexture(std::string id, const char* path);
     // Returns the texture registered as id, or nullptr (reported to stderr)
     // if there is none. Never inserts. The pointer is non-owning.

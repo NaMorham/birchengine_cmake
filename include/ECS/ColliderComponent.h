@@ -5,8 +5,7 @@
 #include "../TextureManager.h"
 #include "../AssetManager.h"
 
-class ColliderComponent : public Component
-{
+class ColliderComponent : public Component {
 public:
     SDL_Rect collider{ 0, 0, 0, 0 };
     std::string tag{};
@@ -16,10 +15,7 @@ public:
 
     TransformComponent* transform{ nullptr };
 
-    ColliderComponent(std::string t)
-    {
-        tag = t;
-    }
+    ColliderComponent(std::string t) { tag = t; }
 
     ColliderComponent(std::string t, int xpos, int ypos, int size)
     {
@@ -57,11 +53,7 @@ public:
         destR.y = collider.y - Game::camera.y;
     }
 
-    void draw() const override
-    {
-        TextureManager::Draw(tex, srcR, destR, SDL_FLIP_NONE);
-    }
+    void draw() const override { TextureManager::Draw(tex, srcR, destR, SDL_FLIP_NONE); }
 
 private:
-
 };

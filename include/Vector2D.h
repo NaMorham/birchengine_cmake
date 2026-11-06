@@ -1,8 +1,7 @@
 #pragma once
 #include <iostream>
 
-class Vector2D
-{
+class Vector2D {
 public:
     float x{ 0.0f };
     float y{ 0.0f };

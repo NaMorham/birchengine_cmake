@@ -8,19 +8,18 @@
 #include <SDL_ttf.h>
 #include <string>
 
-class UILabel : public Component
-{
+class UILabel : public Component {
 public:
-    UILabel(int xpos, int ypos, std::string text, std::string font, SDL_Color& colour) :
-        labelText(text), labelFont(font), textColour(colour)
+    UILabel(int xpos, int ypos, std::string text, std::string font, SDL_Color& colour)
+        : labelText(text), labelFont(font), textColour(colour)
     {
         position.x = xpos;
         position.y = ypos;
 
         SetLabelText(labelText, labelFont);
     }
-    ~UILabel()
-    {}
+
+    ~UILabel() {}
 
     void SetLabelText(std::string text, std::string font)
     {
@@ -31,10 +30,7 @@ public:
         (void)SDL_QueryTexture(labelTexture, nullptr, nullptr, &position.w, &position.h);
     }
 
-    void draw() const override
-    {
-        (void)SDL_RenderCopy(Game::renderer, labelTexture, nullptr, &position);
-    }
+    void draw() const override { (void)SDL_RenderCopy(Game::renderer, labelTexture, nullptr, &position); }
 
 private:
     SDL_Rect position;

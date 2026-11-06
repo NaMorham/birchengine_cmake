@@ -31,9 +31,10 @@ inline EntityID getNewEntityID()
     return lastEntityID++;
 }
 
-template <typename T> inline ComponentID getComponentTypeID() noexcept
+template <typename T>
+inline ComponentID getComponentTypeID() noexcept
 {
-    static_assert (std::is_base_of<Component, T>::value, "");
+    static_assert(std::is_base_of<Component, T>::value, "");
     // Initialised once per type (thread-safe in C++11 and later), but the
     // ID comes from getNewComponentTypeID(), which is not thread-safe.
     static ComponentID typeID{ getNewComponentTypeID() };
@@ -48,8 +49,7 @@ using GroupBitset = std::bitset<maxGroups>;
 
 using ComponentArray = std::array<Component*, maxComponents>;
 
-class Component
-{
+class Component {
 public:
     Entity* entity{ nullptr };  // pointer to the "owning" entity
 
@@ -72,8 +72,7 @@ public:
     virtual void drawBounds() const {}
 };
 
-class Entity
-{
+class Entity {
 private:
     Manager& manager;
     bool active{ true };
@@ -89,7 +88,9 @@ public:
 
     void update()
     {
-        for (auto& c : components) c->update();
+        for (auto& c : components) {
+            c->update();
+        }
     }
 
     void draw() const
@@ -109,17 +110,11 @@ public:
 
     void destroy() { active = false; }
 
-    [[nodiscard]] bool hasGroup(Group mGroup) const
-    {
-        return groupBitset[mGroup];
-    }
+    [[nodiscard]] bool hasGroup(Group mGroup) const { return groupBitset[mGroup]; }
 
     void addGroup(Group mGroup);
 
-    void delGroup(Group mGroup)
-    {
-        groupBitset[mGroup] = false;
-    }
+    void delGroup(Group mGroup) { groupBitset[mGroup] = false; }
 
     template <typename T>
     [[nodiscard]] bool hasComponent() const
@@ -132,7 +127,7 @@ public:
     {
         T* c(new T(std::forward<TArgs>(mArgs)...));
         c->entity = this;
-        std::unique_ptr<Component>uPtr { c };
+        std::unique_ptr<Component> uPtr{ c };
         components.emplace_back(std::move(uPtr));
 
         componentArray[getComponentTypeID<T>()] = c;
@@ -142,7 +137,7 @@ public:
         return *c;
     }
 
-    template<typename T>
+    template <typename T>
     [[nodiscard]] T& getComponent() const
     {
         auto ptr(componentArray[getComponentTypeID<T>()]);
@@ -152,8 +147,7 @@ public:
     [[nodiscard]] inline EntityID getId() const { return id; }
 };
 
-class Manager
-{
+class Manager {
 private:
     std::vector<std::unique_ptr<Entity>> entities{};
     std::array<std::vector<Entity*>, maxGroups> groupedEntities{};
@@ -177,37 +171,28 @@ public:
     {
         for (auto i(0u); i < maxGroups; i++) {
             auto& v(groupedEntities[i]);
-            v.erase(
-                std::remove_if(std::begin(v), std::end(v),
-                    [i](Entity* mEntity)
-            {
-                return !mEntity->isActive() || !mEntity->hasGroup(i);
-            }),
+            v.erase(std::remove_if(std::begin(v), std::end(v),
+                        [i](Entity* mEntity) {
+                            return !mEntity->isActive() || !mEntity->hasGroup(i);
+                        }),
                 std::end(v));
         }
 
         entities.erase(std::remove_if(std::begin(entities), std::end(entities),
-            [](const std::unique_ptr<Entity> &mEntity)
-        {
-            return !mEntity->isActive();
-        }),
+                           [](const std::unique_ptr<Entity>& mEntity) {
+                               return !mEntity->isActive();
+                           }),
             std::end(entities));
     }
 
-    void AddToGroup(Entity* mEntity, Group mGroup)
-    {
-        groupedEntities[mGroup].emplace_back(mEntity);
-    }
+    void AddToGroup(Entity* mEntity, Group mGroup) { groupedEntities[mGroup].emplace_back(mEntity); }
 
-    [[nodiscard]] std::vector<Entity*>& getGroup(Group mGroup)
-    {
-        return groupedEntities[mGroup];
-    }
+    [[nodiscard]] std::vector<Entity*>& getGroup(Group mGroup) { return groupedEntities[mGroup]; }
 
     [[nodiscard]] Entity& addEntity()
     {
-        Entity *e = new Entity(*this);
-        std::unique_ptr<Entity> uPtr { e };
+        Entity* e = new Entity(*this);
+        std::unique_ptr<Entity> uPtr{ e };
         entities.emplace_back(std::move(uPtr));
         return *e;
     }

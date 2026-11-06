@@ -9,8 +9,7 @@
 class AssetManager;
 class ColliderComponent;
 
-class Game
-{
+class Game {
 public:
     Game();
     ~Game();
@@ -35,8 +34,7 @@ public:
 
     static SDL_Rect camera;
     static AssetManager* assets;
-    enum groupLabels : std::size_t
-    {
+    enum groupLabels : std::size_t {
         groupMap,
         groupPlayers,
         groupColliders,

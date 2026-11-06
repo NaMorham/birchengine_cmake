@@ -19,7 +19,7 @@ Manager manager;
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 
-SDL_Rect Game::camera = { 0,0,1600,1280 };
+SDL_Rect Game::camera = { 0, 0, 1600, 1280 };
 
 AssetManager* Game::assets = new AssetManager(&manager);
 
@@ -38,21 +38,20 @@ auto& label(manager.addEntity());
 #if !defined(BIRCH_FOUND_SDL2_MAJOR) || !defined(BIRCH_FOUND_SDL2_IMAGE_MAJOR) || !defined(BIRCH_FOUND_SDL2_TTF_MAJOR)
 #error "BIRCH_FOUND_* versions must be defined by the build (see cmake/BirchPins.cmake)"
 #endif
-static_assert(SDL_MAJOR_VERSION == BIRCH_FOUND_SDL2_MAJOR
-              && SDL_MINOR_VERSION == BIRCH_FOUND_SDL2_MINOR
-              && SDL_PATCHLEVEL == BIRCH_FOUND_SDL2_PATCH,
-              "SDL.h is not the version CMake found: another SDL2 install is shadowing it on the include path");
-static_assert(SDL_IMAGE_MAJOR_VERSION == BIRCH_FOUND_SDL2_IMAGE_MAJOR
-              && SDL_IMAGE_MINOR_VERSION == BIRCH_FOUND_SDL2_IMAGE_MINOR
-              && SDL_IMAGE_PATCHLEVEL == BIRCH_FOUND_SDL2_IMAGE_PATCH,
-              "SDL_image.h is not the version CMake found: another SDL2_image install is shadowing it on the include path");
-static_assert(SDL_TTF_MAJOR_VERSION == BIRCH_FOUND_SDL2_TTF_MAJOR
-              && SDL_TTF_MINOR_VERSION == BIRCH_FOUND_SDL2_TTF_MINOR
-              && SDL_TTF_PATCHLEVEL == BIRCH_FOUND_SDL2_TTF_PATCH,
-              "SDL_ttf.h is not the version CMake found: another SDL2_ttf install is shadowing it on the include path");
+static_assert((SDL_MAJOR_VERSION == BIRCH_FOUND_SDL2_MAJOR) &&
+                  (SDL_MINOR_VERSION == BIRCH_FOUND_SDL2_MINOR) &&
+                  (SDL_PATCHLEVEL == BIRCH_FOUND_SDL2_PATCH),
+    "SDL.h is not the version CMake found: another SDL2 install is shadowing it on the include path");
+static_assert((SDL_IMAGE_MAJOR_VERSION == BIRCH_FOUND_SDL2_IMAGE_MAJOR) &&
+                  (SDL_IMAGE_MINOR_VERSION == BIRCH_FOUND_SDL2_IMAGE_MINOR) &&
+                  (SDL_IMAGE_PATCHLEVEL == BIRCH_FOUND_SDL2_IMAGE_PATCH),
+    "SDL_image.h is not the version CMake found: another SDL2_image install is shadowing it on the include path");
+static_assert((SDL_TTF_MAJOR_VERSION == BIRCH_FOUND_SDL2_TTF_MAJOR) &&
+                  (SDL_TTF_MINOR_VERSION == BIRCH_FOUND_SDL2_TTF_MINOR) &&
+                  (SDL_TTF_PATCHLEVEL == BIRCH_FOUND_SDL2_TTF_PATCH),
+    "SDL_ttf.h is not the version CMake found: another SDL2_ttf install is shadowing it on the include path");
 
-namespace
-{
+namespace {
     // Log one library's compiled (header) and linked (runtime) versions.
     // A difference means the shared library loaded at run time is not the
     // one the build was checked against (SC-41/SC-42), e.g. a stale DLL next
@@ -61,15 +60,13 @@ namespace
     // what is running.
     void logLibraryVersion(const char* name, const SDL_version& compiled, const SDL_version* linked)
     {
-        std::cerr << name << ": compiled "
-                  << static_cast<int>(compiled.major) << "." << static_cast<int>(compiled.minor) << "."
-                  << static_cast<int>(compiled.patch);
+        std::cerr << name << ": compiled " << static_cast<int>(compiled.major) << "."
+                  << static_cast<int>(compiled.minor) << "." << static_cast<int>(compiled.patch);
         if (linked == nullptr) {
             std::cerr << ", linked version unavailable" << std::endl;
             return;
         }
-        std::cerr << ", linked "
-                  << static_cast<int>(linked->major) << "." << static_cast<int>(linked->minor) << "."
+        std::cerr << ", linked " << static_cast<int>(linked->major) << "." << static_cast<int>(linked->minor) << "."
                   << static_cast<int>(linked->patch);
         if ((linked->major != compiled.major) ||
             (linked->minor != compiled.minor) ||
@@ -95,13 +92,15 @@ namespace
         SDL_TTF_VERSION(&compiled);
         logLibraryVersion("SDL2_ttf", compiled, TTF_Linked_Version());
     }
-}
+}  // namespace
 
 Game::Game() : window{ nullptr }
-{}
+{
+}
 
 Game::~Game()
-{}
+{
+}
 
 void Game::init(const char* title, int width, int height, bool fullscreen)
 {
@@ -152,11 +151,11 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
     assets->AddFont("LiberationSans", resourcePath("fonts/LiberationSans-Regular.ttf"), 16);
 
     map = new Map("terrain", 3, 32);
-    //ecs implementation
+    // ecs implementation
 
     map->LoadMap(resourcePath("assets/map.map"), 25, 20);
 
-    (void)player.addComponent<TransformComponent>(800.0f, 640.0f, 32 , 32, 2);
+    (void)player.addComponent<TransformComponent>(800.0f, 640.0f, 32, 32, 2);
     (void)player.addComponent<SpriteComponent>("player", true);
     (void)player.addComponent<KeyboardController>();
     (void)player.addComponent<ColliderComponent>("player");
@@ -166,11 +165,10 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
     (void)label.addComponent<UILabel>(10, 10, "Test String", "LiberationSans", white);
 
-    assets->CreateProjectile(Vector2D(600, 600), Vector2D(2,0),200, 2, "projectile");
+    assets->CreateProjectile(Vector2D(600, 600), Vector2D(2, 0), 200, 2, "projectile");
     assets->CreateProjectile(Vector2D(600, 620), Vector2D(2, 0), 200, 2, "projectile");
     assets->CreateProjectile(Vector2D(400, 600), Vector2D(2, 1), 200, 2, "projectile");
     assets->CreateProjectile(Vector2D(600, 600), Vector2D(2, -1), 200, 2, "projectile");
-
 }
 
 auto& tiles(manager.getGroup(Game::groupMap));
@@ -182,9 +180,8 @@ void Game::handleEvents()
 {
     SDL_PollEvent(&event);
 
-    switch (event.type)
-    {
-    case SDL_QUIT :
+    switch (event.type) {
+    case SDL_QUIT:
         isRunning = false;
         break;
     default:
@@ -212,7 +209,8 @@ void Game::update()
     }
 
     for (auto& p : projectiles) {
-        if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider)) {
+        if (Collision::AABB(
+                player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider)) {
             std::cout << "Hit player!" << std::endl;
             p->destroy();
         }
@@ -251,12 +249,14 @@ void Game::render()
         std::cerr << "Draw tile " << idx++ << "/" << tiles.size() << std::endl;
 #endif
         t->draw();
-        if (showBoundaries) t->drawBounds();
+        if (showBoundaries) {
+            t->drawBounds();
+        }
     }
 
     if (showColliders) {
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
-        idx=1;
+        idx = 1;
 #endif
         for (auto& c : colliders) {
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
@@ -274,7 +274,9 @@ void Game::render()
         std::cerr << "Draw players " << idx++ << "/" << players.size() << std::endl;
 #endif
         p->draw();
-        if (showBoundaries) p->drawBounds();
+        if (showBoundaries) {
+            p->drawBounds();
+        }
     }
 
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(_CHECK_RENDER)
@@ -285,7 +287,9 @@ void Game::render()
         std::cerr << "Draw projectiles " << idx++ << "/" << projectiles.size() << std::endl;
 #endif
         p->draw();
-        if (showBoundaries) p->drawBounds();
+        if (showBoundaries) {
+            p->drawBounds();
+        }
     }
 
     label.draw();
@@ -297,8 +301,7 @@ std::string Game::resourcePath(const std::string& relativePath)
 {
     // Resolved once. SDL_GetBasePath() returns the executable's directory
     // (or Contents/Resources/ inside a macOS bundle), with a trailing separator.
-    static const std::string resourceRoot = []()
-    {
+    static const std::string resourceRoot = []() {
         std::string root;
         char* basePath = SDL_GetBasePath();
         if (basePath) {

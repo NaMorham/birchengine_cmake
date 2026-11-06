@@ -1,8 +1,7 @@
 #pragma once
 #include <string>
 
-class Map
-{
+class Map {
 public:
     Map(std::string tID, int ms, int ts);
     ~Map();
@@ -15,5 +14,4 @@ private:
     int mapScale{ 1 };
     int tileSize{ 32 };
     int scaledSize{ 32 };
-
 };

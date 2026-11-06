@@ -5,8 +5,7 @@
 #include "../Game.h"
 #include "../TextureManager.h"
 
-class TileComponent : public Component
-{
+class TileComponent : public Component {
 public:
     SDL_Texture* texture{ nullptr };  // non-owning: owned by Game::assets
     SDL_Rect srcRect{ 0, 0, 0, 0 }, destRect{ 0, 0, 0, 0 };
@@ -15,8 +14,7 @@ public:
     TileComponent() = default;
 
     TileComponent(int srcX, int srcY, int xpos, int ypos, int tsize, int tscale, std::string id)
-        : srcRect{ srcX, srcY }, destRect{ xpos, ypos }, 
-          position{ static_cast<float>(xpos), static_cast<float>(ypos) }
+        : srcRect{ srcX, srcY }, destRect{ xpos, ypos }, position{ static_cast<float>(xpos), static_cast<float>(ypos) }
     {
         texture = Game::assets->GetTexture(id);
         srcRect.w = srcRect.h = tsize;
@@ -29,10 +27,7 @@ public:
         destRect.y = static_cast<int>(position.y - Game::camera.y);
     }
 
-    void draw() const override
-    {
-        TextureManager::Draw(texture, srcRect, destRect, SDL_FLIP_NONE);
-    }
+    void draw() const override { TextureManager::Draw(texture, srcRect, destRect, SDL_FLIP_NONE); }
 
     void drawBounds() const override
     {

@@ -1,7 +1,6 @@
 #pragma once
 
-struct Animation
-{
+struct Animation {
     int index{ 0 };
     int frames{ 1 };
     int speed{ 100 };
