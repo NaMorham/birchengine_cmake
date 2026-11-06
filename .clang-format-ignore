@@ -1,0 +1,5 @@
+# CMake configure_file templates: clang-format splits @VAR@ tokens, so
+# configure_file no longer substitutes them.
+**/*.in
+**/*.tmpl
+

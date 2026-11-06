@@ -53,6 +53,8 @@ AllowShortLoopsOnASingleLine: false
 BreakBeforeBinaryOperators: None
 BreakBinaryOperations: OnePerLine
 BreakTemplateDeclarations: Yes
+PackConstructorInitializers: Never
+BreakConstructorInitializers: BeforeColon
 PointerAlignment: Left
 ReferenceAlignment: Pointer
 
