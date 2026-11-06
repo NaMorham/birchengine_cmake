@@ -1,0 +1,64 @@
+# BirchEngine C++ formatting.
+#
+# Layout: Stroustrup braces (function braces on their own line; class,
+# struct, enum, namespace, control-statement and lambda braces on the same
+# line; `else` on its own line), 4-space indent, no tabs.
+#
+# Rules clang-format enforces on top of Stroustrup (safety-standard habits):
+#   - Braces on every control-statement body, even a single statement
+#     (MISRA C++ 6-3-1 / 6-4-1, JSF AV 59). InsertBraces adds missing ones.
+#   - Long conditions break after the binary operator.
+#
+# Rule clang-format CANNOT enforce (review it by hand):
+#   - Explicit parentheses around each sub-expression in compound
+#     conditions (JSF AV 213), e.g. `if ((a > b) && (c != d))`.
+#
+# Written for clang-format 21 (Ubuntu). BreakBinaryOperations needs 20 or
+# later; check `clang-format --version` if an option is reported unknown.
+---
+Language: Cpp
+BasedOnStyle: LLVM
+Standard: c++20
+
+# Indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ContinuationIndentWidth: 4
+# Continuation lines indent by 4 instead of aligning under the open bracket,
+# which pushed lambda bodies far to the right.
+AlignAfterOpenBracket: DontAlign
+AccessModifierOffset: -4
+IndentCaseLabels: false
+NamespaceIndentation: All
+
+# Line length
+ColumnLimit: 120
+
+# Braces
+BreakBeforeBraces: Stroustrup
+InsertBraces: true
+Cpp11BracedListStyle: false
+
+# Short forms: never collapse a body onto the statement's line.
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: Empty
+AllowShortLoopsOnASingleLine: false
+
+# Operators and declarations
+BreakBeforeBinaryOperators: None
+BreakBinaryOperations: OnePerLine
+BreakTemplateDeclarations: Yes
+PointerAlignment: Left
+ReferenceAlignment: Pointer
+
+# Comments
+SpacesBeforeTrailingComments: 2
+
+# Includes: order matters in this project (SDL headers, generated headers),
+# so leave it to the author.
+SortIncludes: Never

@@ -1,0 +1,29 @@
+# BirchEngine editor settings: https://editorconfig.org
+# Read by Visual Studio, VS Code, CLion and most editors; overrides each
+# user's own editor settings for files in this repository.
+# C++ brace and layout rules are in .clang-format.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# Markdown: two trailing spaces are a line break.
+[*.md]
+trim_trailing_whitespace = false
+
+[*.{json,yml,yaml}]
+indent_size = 2
+
+# Windows batch files MUST be CRLF: cmd.exe mis-parses labels and GOTO in
+# LF files.
+[*.{bat,cmd}]
+end_of_line = crlf
+
+[Makefile]
+indent_style = tab

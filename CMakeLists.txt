@@ -66,6 +66,8 @@ set (FONTS
 )
 
 set (EXTRAS
+    .clang-format
+    .editorconfig
     BirchEngineVer.h.in
     cmake/BirchPins.cmake
     README.md
