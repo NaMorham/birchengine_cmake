@@ -1,0 +1,15 @@
+# Formatting-only commits for `git blame` to skip, so blame shows who last
+# changed the code rather than who reformatted it.
+#
+# Enable locally (once per clone):
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+# GitHub reads this file automatically.
+#
+# Full 40-character hashes only. Add a commit here only if it changes layout
+# and nothing else.
+
+# SDL2-0006: Update coding style for loops and conditionals for consistency
+1bc77d69ce88070377513baaa58366e92e642b71
+
+# SDL2-0006: Style changes to match Stroustrup (brace style, clang-format run)
+242f6cf76ff21f0202bc0fa2cdd496c8ff982884
